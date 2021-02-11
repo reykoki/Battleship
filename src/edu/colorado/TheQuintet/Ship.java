@@ -4,6 +4,7 @@ package edu.colorado.csci44485448;
 public class Ship {
     private String name;
     // Team TheQuintet, pair 1 was here. 
+    // Team Quintent, pair 2 was here
     // TODO: create appropriate getter and setter methods
     // TODO: Understand encapsulation
     // TODO: Understand what these todo comments mean
