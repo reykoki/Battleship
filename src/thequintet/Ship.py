@@ -31,12 +31,3 @@ class Ship:
         """
         return self.name
 
-def main():
-    # testing:
-    tugboat = Ship()
-    tugboat.setName('Theodore')
-    print(tugboat.getName())
-    tugboat.show()
-
-if __name__ == "__main__":
-    main()
