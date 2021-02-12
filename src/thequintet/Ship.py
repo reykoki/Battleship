@@ -1,29 +1,24 @@
 #!/usr/bin/env python
-""" generated source for module Ship """
-#  This is the  baseclass for your ship.  Modify accordingly
-#  TODO: practice good OO design
 
-class Ship(object):
+# baseclass for Ship
+class Ship:
     """
     Generated source for class Ship
     """
-    name = str()
-
-    # def __init__(self, name):
-    #     self.setName(name)
+    def __init__(self, name = ''):
+        self._name = name
 
     #  Team TheQuintet, pair 1 was here.
     #  Team Quintent, pair 2 was here
-    #  TODO: create appropriate getter and setter methods
-    #  TODO: Understand encapsulation
-    #  TODO: Understand what these todo comments mean
+
     def show(self):
         """
         Generated source for method show
         """
-        #  dunno why this is here maybe it is just an example method
         print("IF you can't see this then something is severely wrong!!")
 
+    # getter/setters ensure encapsulation in OO programming by bundling the
+    # data with the methods that operate on the data
     def setName(self, ship_name):
         """
         Set ship name
@@ -35,3 +30,4 @@ class Ship(object):
         Get ship name
         """
         return self.name
+
