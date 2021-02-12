@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# baseclass for ship
+# baseclass for Ship
 class Ship:
     """
     Generated source for class Ship
@@ -17,10 +17,8 @@ class Ship:
         """
         print("IF you can't see this then something is severely wrong!!")
 
-
-    # getter/setters ensure encapsulation in OO programming by bunding the
+    # getter/setters ensure encapsulation in OO programming by bundling the
     # data with the methods that operate on the data
-
     def setName(self, ship_name):
         """
         Set ship name
