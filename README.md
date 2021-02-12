@@ -2,7 +2,7 @@
 ### Battleship Game
 #### Track 2
 
-Team: Devin Burke, Rey Koki and Daniel Torres
+Team: [Devin Burke](https://github.com/mrburke00), [Rey Koki](https://github.com/reykoki) and [Daniel Torres](https://github.com/danieltorres17)
 
 ### Minimal Requirments
 <ol>
