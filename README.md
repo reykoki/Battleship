@@ -11,4 +11,5 @@ This repo includes:
 - .gitignore to exclude any superfluous files/directories
 - A pdf that contains the CRC cards that show our brainstorming for the object oriented design for our battlship game
 - A group contract that lays expectations and commitments
+- python scripts for Main and Ship converted from the provided *java scripts
 
