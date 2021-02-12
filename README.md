@@ -13,5 +13,5 @@ This repo includes:
 - A group contract that lays expectations and commitments
 - python script Ship converted from the provided *java scripts
     - located in /src/thequintet/
-    - /src/edu/colorado/thequintet/* will be deleted after post Milestone1
+    - /src/edu/ will be deleted post Milestone1
 
