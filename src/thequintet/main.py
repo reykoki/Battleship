@@ -4,6 +4,7 @@ from Ship import Ship
 
 def main():
     # testing:
+    Battleship_Game.start_game()
     tugboat = Ship()
     tugboat.setName('Theodore')
     print(tugboat.getName())

@@ -1,21 +1,12 @@
 #!/usr/bin/env python
 
 # baseclass for Ship
-class Ship:
+class Battleship:
     """
     Generated source for class Ship
     """
     def __init__(self, name = ''):
         self._name = name
-
-    #  Team TheQuintet, pair 1 was here.
-    #  Team Quintent, pair 2 was here
-
-    def show(self):
-        """
-        Generated source for method show
-        """
-        print("IF you can't see this then something is severely wrong!!")
 
     # getter/setters ensure encapsulation in OO programming by bundling the
     # data with the methods that operate on the data
