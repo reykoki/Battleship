@@ -1,21 +1,15 @@
 import numpy as np
 
-class InitialInputCoordinate(object):
+class InputCoordinate(object):
 
-    def __init__(self, input_coord, direction, ship_length):
+    def __init__(self, input_coord):
         self.input_coord = input_coord
-        self.direction = direction
-        self.ship_length = ship_length
-        self.init_coords = []
 
     def check_coord(self):
         input_coord = self.input_coord
         # convert letter to number with index 0
         col = ord(input_coord[0].lower()) - 97
         row = int(input_coord[1:]) - 1
-        print('------')
-        print(row, col)
-        print('------')
         if len(input_coord) !=2:
             print('Invalid length of coordinates (must be string of length 2)')
         elif 0 > col > 9:
@@ -26,6 +20,14 @@ class InitialInputCoordinate(object):
             # return with index 0
             return [row, col]
         return []
+
+
+class InitialInputCoordinate(InputCoordinate):
+
+    def __init__(self, input_coord, direction, ship_length):
+        super().__init__(input_coord)
+        self.direction = direction
+        self.ship_length = ship_length
 
     def on_board(self, init_coord_c, init_coord_s):
         ship_len = self.ship_length
@@ -46,10 +48,10 @@ class InitialInputCoordinate(object):
 
         if direction == 'h':
             # check horizontal length of ship is within grid
-            rows, cols = InitialInputCoordinate.on_board(self, col_o, row_o)
+            rows, cols = self.on_board(col_o, row_o)
         elif direction == 'v':
             # check vertical length of ship is within grid
-            cols, rows = InitialInputCoordinate.on_board(self, row_o, col_o)
+            cols, rows = self.on_board(row_o, col_o)
         else:
             print('Invalid direction: please choose between h and v')
             return []
@@ -58,17 +60,13 @@ class InitialInputCoordinate(object):
         return ship_loc
 
     def check_input(self):
-        coords = InitialInputCoordinate.check_coord(self)
+        coords = self.check_coord()
         # if this is the initial user input for setting up board there are more steps
-        if self.direction:
-            if len(coords) == 2:
-                ship_loc = InitialInputCoordinate.check_dir(self, coords)
-                if len(ship_loc) > 0:
-                    return ship_loc
-            return []
-        # check for if the attack coordinates are good then convert from letter/num pair to num/num pair
-        else:
-            return coords
+        if len(coords) == 2:
+            ship_loc = self.check_dir(coords)
+            if len(ship_loc) > 0:
+                return ship_loc
+        return []
 
     @classmethod
     def get_user_input(self, ship_obj):
@@ -82,27 +80,23 @@ class InitialInputCoordinate(object):
             ship_obj.setCoordinates(ship_coords)
         else:
             print('BAD USER INPUT: Try again!')
-            UserInput.get_user_input(self, ship_obj)
+            self.get_user_input(ship_obj)
 
 
-class AttackInputCoordinate(InitialInputCoordinate):
+class AttackInputCoordinate(InputCoordinate):
     def __init__(self, input_coord):
-        super().__init__(input_coord, direction = None, ship_length = None)
-
-    def check_input(self):
-        coords = AttackInputCoordinate.check_coord(self)
-        return coords
+        super().__init__(input_coord)
 
     @classmethod
     def get_user_input(self):
-        input_coord = input('please give coordinate you would like to attack')
+        input_coord = input('provide the coordinate you would like to attack: ')
         attack_coord = self(input_coord)
-        attack_coord_rc = attack_coord.check_input()
+        attack_coord_rc = attack_coord.check_coord()
 
-        if attack_coord_rc.size() == 2:
-            return attack_coord
+        if len(attack_coord_rc) == 2:
+            return attack_coord_rc
         else:
             print('Try again with valid attack coordinates')
-            play_game()
+            self.get_user_input()
 
 
