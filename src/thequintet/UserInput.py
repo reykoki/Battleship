@@ -1,8 +1,8 @@
 import numpy as np
 
-class InputCoordinate(object):
+class InitialInputCoordinate(object):
 
-    def __init__(self, input_coord, direction = None, ship_length = None):
+    def __init__(self, input_coord, direction, ship_length):
         self.input_coord = input_coord
         self.direction = direction
         self.ship_length = ship_length
@@ -46,10 +46,10 @@ class InputCoordinate(object):
 
         if direction == 'h':
             # check horizontal length of ship is within grid
-            rows, cols = InputCoordinate.on_board(self, col_o, row_o)
+            rows, cols = InitialInputCoordinate.on_board(self, col_o, row_o)
         elif direction == 'v':
             # check vertical length of ship is within grid
-            cols, rows = InputCoordinate.on_board(self, row_o, col_o)
+            cols, rows = InitialInputCoordinate.on_board(self, row_o, col_o)
         else:
             print('Invalid direction: please choose between h and v')
             return []
@@ -58,15 +58,51 @@ class InputCoordinate(object):
         return ship_loc
 
     def check_input(self):
-        coords = InputCoordinate.check_coord(self)
+        coords = InitialInputCoordinate.check_coord(self)
         # if this is the initial user input for setting up board there are more steps
         if self.direction:
             if len(coords) == 2:
-                ship_loc = InputCoordinate.check_dir(self, coords)
+                ship_loc = InitialInputCoordinate.check_dir(self, coords)
                 if len(ship_loc) > 0:
                     return ship_loc
             return []
         # check for if the attack coordinates are good then convert from letter/num pair to num/num pair
         else:
             return coords
+
+    @classmethod
+    def get_user_input(self, ship_obj):
+        start_coord = input('\nwhich coordinate would you like to place your {}? '.format(ship_obj.getName()))
+        direction = input('\nwould you like to place your ship vertically (down) or horizontally (to the right) of your initial coordinate? [v/h] ')
+        input_coord = self(start_coord, direction, ship_obj.getLength())
+
+        ship_coords = input_coord.check_input()
+
+        if len(ship_coords) > 0:
+            ship_obj.setCoordinates(ship_coords)
+        else:
+            print('BAD USER INPUT: Try again!')
+            UserInput.get_user_input(self, ship_obj)
+
+
+class AttackInputCoordinate(InitialInputCoordinate):
+    def __init__(self, input_coord):
+        super().__init__(input_coord, direction = None, ship_length = None)
+
+    def check_input(self):
+        coords = AttackInputCoordinate.check_coord(self)
+        return coords
+
+    @classmethod
+    def get_user_input(self):
+        input_coord = input('please give coordinate you would like to attack')
+        attack_coord = self(input_coord)
+        attack_coord_rc = attack_coord.check_input()
+
+        if attack_coord_rc.size() == 2:
+            return attack_coord
+        else:
+            print('Try again with valid attack coordinates')
+            play_game()
+
 
