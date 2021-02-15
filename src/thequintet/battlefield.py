@@ -23,7 +23,7 @@ class battlefield:
         # board is all zeros
         print(self.grid)
         # this only works if there is only one of each ship
-        # it checks that there are no other grid spots with the ship name in it
+        # it checks if there are any other gridspaces with that ship name
         if ship_name in chain(*self.grid):
             outcome = 'You have hit your opponenets {}'.format(ship_name)
         else:

@@ -7,7 +7,5 @@ def main():
     curr_game = game()
     curr_game.SetUpBoard()
 
-    # testing:
-
 if __name__ == "__main__":
     main()
