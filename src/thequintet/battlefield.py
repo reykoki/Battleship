@@ -19,7 +19,6 @@ class battlefield:
                 return False
         return True
 
-
     def result_of_hit(self, ship_name):
         # board is all zeros
         print(self.grid)
