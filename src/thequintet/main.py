@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
-from Ship import Ship
+from Ship import Battleship
+from battleship_game import game
 
 def main():
-    # testing:
-    tugboat = Ship()
-    tugboat.setName('Theodore')
-    print(tugboat.getName())
-    tugboat.show()
+    curr_game = game()
+    curr_game.SetUpBoard()
 
 if __name__ == "__main__":
     main()
