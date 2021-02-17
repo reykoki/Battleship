@@ -36,7 +36,7 @@ class game:
 
     def SetUpShips(self, ship_obj):
         InitialInputCoordinate.get_user_input(ship_obj)
-        if not self.p1bf.place_on_board(ship_obj):
+        if not self.p1bf.place_on_board(ship_obj.coordinates, ship_obj.getName()):
             print('\nthe space you chose to put your {} is already occupied, choose another'.format(ship_obj.getName()))
             game.SetUpShips(self, ship_obj)
 

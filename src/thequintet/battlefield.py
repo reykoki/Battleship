@@ -9,12 +9,12 @@ class battlefield:
     def set_grid_space(self, row, col, val):
         self.grid[row][col] = val
 
-    def place_on_board(self, ship):
-        for coord in ship.coordinates:
+    def place_on_board(self, ship_coords, ship_name):
+        for coord in ship_coords:
             row = coord[0]
             col = coord[1]
             if self.grid[row][col] == 0:
-                self.set_grid_space(row, col, ship.getName())
+                self.set_grid_space(row, col, ship_name)
             else:
                 return False
         return True
