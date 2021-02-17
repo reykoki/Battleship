@@ -48,6 +48,9 @@ class battlefield:
         else:
             self.set_grid_space(row, col, 0)
             outcome = self.result_of_hit(val)
+        #update visualization
+        self.modifyBoardAttacks(attack_coord, outcome)
+        self.printBoard()
         return outcome
 
     def buildBoard(self):
@@ -63,12 +66,18 @@ class battlefield:
         print('\n'.join([''.join(['{:4}'.format(item) for item in row])
                          for row in self.game_board]))
 
-    def modifyBoard(self, ship_obj):
+    def modifyBoardAttacks(self, attack_coord, outcome):
+        row_coord = attack_coord[0]
+        col_coord = attack_coord[1]
+        if outcome == 'MISS':
+            self.game_board[row_coord+1][col_coord+1] = 'O'
+        else:
+            self.game_board[row_coord+1][col_coord+1] = 'X'
+
+    def modifyBoardShips(self, ship_obj):
         for coordinate in ship_obj.coordinates:
-            row_coor = coordinate[0]
-            col_coor = coordinate[1]
-            x = self.letter_coordinates[col_coor+1]
-            y = self.number_coordinates[row_coor]
-            self.game_board[row_coor+1][col_coor+1] = '&'
-        print('-------------------------------------')
+            row_coord = coordinate[0]
+            col_coord = coordinate[1]
+            self.game_board[row_coord+1][col_coord+1] = '&'
+
 
