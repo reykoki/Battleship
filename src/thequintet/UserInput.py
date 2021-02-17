@@ -68,13 +68,20 @@ class InitialInputCoordinate(InputCoordinate):
                 return ship_loc
         return []
 
+
+    def check_users_input(self, ship_obj, start_coord, direction):
+        input_coord = self(start_coord, direction, ship_obj.getLength())
+        ship_coords = input_coord.check_input()
+        return ship_coords
+
+
     @classmethod
     def get_user_input(self, ship_obj):
+
         start_coord = input('\nwhich coordinate would you like to place your {}? '.format(ship_obj.getName()))
         direction = input('\nwould you like to place your ship vertically (down) or horizontally (to the right) of your initial coordinate? [v/h] ')
-        input_coord = self(start_coord, direction, ship_obj.getLength())
 
-        ship_coords = input_coord.check_input()
+        ship_coords = self.check_users_input(self,ship_obj, start_coord, direction)
 
         if len(ship_coords) > 0:
             ship_obj.setCoordinates(ship_coords)

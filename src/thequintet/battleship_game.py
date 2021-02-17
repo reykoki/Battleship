@@ -5,6 +5,7 @@ from battlefield import battlefield
 from UserInput import InputCoordinate
 from UserInput import InitialInputCoordinate
 from UserInput import AttackInputCoordinate
+from player2 import player2
 
 
 class game:
@@ -22,27 +23,45 @@ class game:
         # player 2
         self.p2bf = battlefield()
 
-    def end_game(self):
-        pass
-
-    def play_game(self):
+    def player1_move(self):
         attack_coord = AttackInputCoordinate.get_user_input()
-        outcome = self.p1bf.attack(attack_coord)
+        outcome = self.p2bf.attack(attack_coord)
         print(outcome)
         if 'YOU WIN' in outcome:
-            self.end_game()
-        else:
-            self.play_game()
+            return False
+        return True
+
+    def player2_move(self):
+        attack_coord = player2.get_attack_coord()
+        outcome = self.p1bf.attack(attack_coord)
+        if 'YOU WIN' in outcome:
+            print('ALL YOUR SHIPS ARE SUNK, you lose')
+            return False
+        return True
+
+    def play_game(self):
+        play = True
+        while play == True:
+            play = self.player1_move()
+            play = self.player2_move()
+
+
+    def AI_SetUpShips(self, ship_obj):
+        coords, ship_name = player2.initialize_board(ship_obj)
+        if not self.p2bf.place_on_board(coords, ship_name):
+            self.AI_SetUpShips
 
     def SetUpShips(self, ship_obj):
         InitialInputCoordinate.get_user_input(ship_obj)
         if not self.p1bf.place_on_board(ship_obj.coordinates, ship_obj.getName()):
             print('\nthe space you chose to put your {} is already occupied, choose another'.format(ship_obj.getName()))
-            game.SetUpShips(self, ship_obj)
+            self.SetUpShips(ship_obj)
 
     def SetUpBoard(self):
         for shipname in self.ships.keys():
             ship_obj = self.ships[shipname]
-            game.SetUpShips(self, ship_obj)
-        game.play_game(self)
+            self.SetUpShips(ship_obj)
+            self.AI_SetUpShips(ship_obj)
+
+        self.play_game()
 
