@@ -10,7 +10,7 @@ class InputCoordinate(object):
         # convert letter to number with index 0
         col = ord(input_coord[0].lower()) - 97
         row = int(input_coord[1:]) - 1
-        if len(row) + len(col) != 2 :
+        if len(input_coord[1:]) > 2 :
             print('Invalid length of coordinates! Try this format: A1 - J10')
         elif 0 > col > 9:
             print('Invalid column choice: choose a letter A-J')
