@@ -42,6 +42,7 @@ class game:
 
     def SetUpBoard(self):
         for shipname in self.ships.keys():
+            print(self.ships[shipname].__dict__)
             ship_obj = self.ships[shipname]
             game.SetUpShips(self, ship_obj)
         game.play_game(self)
