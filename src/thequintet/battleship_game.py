@@ -22,6 +22,7 @@ class game:
         self.p1bf = battlefield()
         # player 2
         self.p2bf = battlefield()
+        self.p2 = player2()
 
     def player1_move(self):
         attack_coord = AttackInputCoordinate.get_user_input()
@@ -32,7 +33,7 @@ class game:
         return True
 
     def player2_move(self):
-        attack_coord = player2.get_attack_coord()
+        attack_coord = self.p2.get_attack_coord()
         outcome = self.p1bf.attack(attack_coord)
         if 'YOU WIN' in outcome:
             print('ALL YOUR SHIPS ARE SUNK, you lose')
@@ -47,9 +48,9 @@ class game:
 
 
     def AI_SetUpShips(self, ship_obj):
-        coords, ship_name = player2.initialize_board(ship_obj)
+        coords, ship_name = self.p2.place_ship(ship_obj)
         if not self.p2bf.place_on_board(coords, ship_name):
-            self.AI_SetUpShips
+            self.AI_SetUpShips(ship_obj)
 
     def SetUpShips(self, ship_obj):
         InitialInputCoordinate.get_user_input(ship_obj)

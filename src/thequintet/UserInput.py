@@ -6,6 +6,7 @@ class InputCoordinate(object):
         self.input_coord = input_coord
 
     def check_coord(self):
+        print(self.__dict__)
         input_coord = self.input_coord
         # convert letter to number with index 0
         col = ord(input_coord[0].lower()) - 97
@@ -60,6 +61,7 @@ class InitialInputCoordinate(InputCoordinate):
         return ship_loc
 
     def check_input(self):
+        print(self.__dict__)
         coords = self.check_coord()
         # if this is the initial user input for setting up board there are more steps
         if len(coords) == 2:
@@ -68,21 +70,18 @@ class InitialInputCoordinate(InputCoordinate):
                 return ship_loc
         return []
 
-
-    def check_users_input(self, ship_obj, start_coord, direction):
-        input_coord = self(start_coord, direction, ship_obj.getLength())
-        ship_coords = input_coord.check_input()
+    @classmethod
+    def get_AI_input(cls, ship_obj, start_coord, direction):
+        input_coordinates = cls(start_coord, direction, ship_obj.getLength())
+        ship_coords = input_coordinates.check_input()
         return ship_coords
 
-
     @classmethod
-    def get_user_input(self, ship_obj):
-
+    def get_user_input(cls, ship_obj):
         start_coord = input('\nwhich coordinate would you like to place your {}? '.format(ship_obj.getName()))
         direction = input('\nwould you like to place your ship vertically (down) or horizontally (to the right) of your initial coordinate? [v/h] ')
-
-        ship_coords = self.check_users_input(self,ship_obj, start_coord, direction)
-
+        input_coordinates = cls(start_coord, direction, ship_obj.getLength())
+        ship_coords = input_coordinates.check_input()
         if len(ship_coords) > 0:
             ship_obj.setCoordinates(ship_coords)
         else:
