@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # baseclass for Ship
+from LUT import Ship_LUT
 class Battleship:
     """
     Generated source for class Ship
@@ -9,6 +10,8 @@ class Battleship:
         self._name = name
         self._length = length
         self.coordinates = coordinates
+        self._LUT_v = Ship_LUT.get_Ship_LUT('v', self._length)
+        self._LUT_h = Ship_LUT.get_Ship_LUT('h', self._length)
 
     # getter/setters ensure encapsulation in OO programming by bundling the
     # data with the methods that operate on the data
@@ -29,6 +32,18 @@ class Battleship:
         Get ship name
         """
         return self._length
+
+    def getVerticalLUT(self):
+        """
+        Get ship name
+        """
+        return self._LUT_v
+
+    def getHorizontalLUT(self):
+        """
+        Get ship name
+        """
+        return self._LUT_h
 
     def setCoordinates(self, ship_coords):
         """

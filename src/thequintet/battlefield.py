@@ -26,7 +26,6 @@ class battlefield:
 
     def result_of_hit(self, ship_name):
         # board is all zeros
-        print(self.grid)
         # this only works if there is only one of each ship
         # it checks if there are any other gridspaces with that ship name
         if ship_name in chain(*self.grid):
