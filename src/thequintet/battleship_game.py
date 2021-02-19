@@ -15,9 +15,10 @@ class game:
     #TODO: parallelize board set up so player 2 doesnt need to wait for player 1 to finish
 
     def __init__(self):
-        self.ships = {'Minesweeper': Battleship('Minesweeper', 2),
-                      'Destroyer': Battleship('Destroyer', 3),
-                      'Battleship': Battleship()}
+        self.ships = {'Minesweeper': Battleship('Minesweeper', 2)}
+        #self.ships = {'Minesweeper': Battleship('Minesweeper', 2),
+        #              'Destroyer': Battleship('Destroyer', 3),
+        #              'Battleship': Battleship()}
         # player 1
         self.p1bf = battlefield()
         # player 2

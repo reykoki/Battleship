@@ -1,43 +1,36 @@
 import random
-from UserInput import InitialInputCoordinate
+from LUT import LUT
 
 
 class player2:
     def __init__(self):
-        self.previous_attacks = []
+        self.attack_LUT = LUT.get_Attack_LUT()
 
-    def random_idx():
-        col = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
-        row = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
-        idx = random.choice(col) + random.choice(row)
-        return idx
+    # make sure the computer does not attack the same spot more than once
+    def remove_attack_coord(self, attack):
+        #removed = filter(lambda x: x != attack, self.attack_LUT)
+        #self.attack_LUT = removed
+        self.attack_LUT = [x for x in self.attack_LUT if x != attack]
 
-    def attacked_previously(self, attack):
-        if attack in previous_attacks:
-            return True
-        else:
-            self.previous_attacks.append(attack)
-            return False
-
-    @classmethod
     def get_attack_coord(self):
-        attack_coord = self.random_idx()
-        if player2.attacked_previously(self, attack_coord):
-            player2.get_attack_coord()
-        else:
-            return attack_coord
+        attack_coord = random.choice(self.attack_LUT)
+        self.remove_attack_coord(attack_coord)
+        return attack_coord
 
-    @classmethod
     def place_ship(self, ship_obj):
-        coord = self.random_idx()
         direction = random.choice(['v', 'h'])
-        ship_coords = InitialInputCoordinate.get_AI_input(ship_obj, coord, direction)
-        print('hiiii')
-        if len(ship_coords) == 0:
-            player2.place_ship(ship_obj)
-            print('yoooooo')
+        if direction == 'h':
+            init_coord = random.choice(ship_obj.getHorizontalLUT())
+            coords = []
+            for idx in range(ship_obj.getLength()):
+                next_coord = (init_coord[0], init_coord[1] + idx)
+                coords.append(next_coord)
         else:
-            print(ship_coords)
-            return(ship_coords, ship_obj.getName())
+            init_coord = random.choice(ship_obj.getVerticalLUT())
+            coords = []
+            for idx in range(ship_obj.getLength()):
+                next_coord = (init_coord[0] + idx, init_coord[1])
+                coords.append(next_coord)
 
-        print(ship_coords)
+        return(coords, ship_obj.getName())
+

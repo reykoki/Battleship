@@ -44,3 +44,9 @@ class Battleship:
         Get ship name
         """
         return self._LUT_h
+
+    def setCoordinates(self, ship_coords):
+        """
+        Set ship coordinates on board
+        """
+        self.coordinates = ship_coords
