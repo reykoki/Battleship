@@ -66,8 +66,10 @@ class battlefield:
                          for row in self.game_board]))
 
     def modifyBoardAttacks(self, attack_coord, outcome):
+        print(attack_coord)
         row_coord = attack_coord[0]
         col_coord = attack_coord[1]
+        print(self.game_board)
         if outcome == 'MISS':
             self.game_board[row_coord+1][col_coord+1] = 'O'
         else:

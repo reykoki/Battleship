@@ -78,7 +78,7 @@ class InitialInputCoordinate(InputCoordinate):
 
     @classmethod
 
-    def get_user_input(self, ship_obj):
+    def get_user_input(cls, ship_obj):
         start_coord = input('\nwhich coordinate would you like to place your {} (example A1, D5, or J9)? '.format(ship_obj.getName()))
         direction = input('\nwould you like to place your ship vertically (down) or horizontally (to the right) of your initial coordinate? [v/h] ')
         input_coordinates = cls(start_coord, direction, ship_obj.getLength())
