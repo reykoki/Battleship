@@ -5,6 +5,7 @@
 import sys
 sys.path.append('../src/thequintet')
 from LUT import LUT
+from LUT import Ship_LUT
 
 
 def test_Attack_LUT_size():
@@ -19,9 +20,12 @@ def test_Attack_LUT_size():
 
 def test_Ship_LUT():
 
-    for shiplength in range(2,8)
+    for shiplength in range(2,8):
+        # number of board positions that are allowed for a ship of length 'shiplength'
+        num_legal_pos = (10 - shiplength + 1) * 10
+        assert len(Ship_LUT.get_Ship_LUT('v', shiplength)) == num_legal_pos
+        assert len(Ship_LUT.get_Ship_LUT('h', shiplength)) == num_legal_pos
 
-        (LUT.get_Ship_LUT('v', shiplength)) ==
-        (LUT.get_Ship_LUT('v', shiplength)) ==
 test_Attack_LUT_size()
+test_Ship_LUT()
 
