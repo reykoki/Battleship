@@ -23,8 +23,6 @@ class game:
         # player 2
         self.p2bf = battlefield()
 
-        self.current_battlefield = battlefield()
-
     def end_game(self):
         pass
 
@@ -44,12 +42,12 @@ class game:
             print('\nthe space you chose to put your {} is already occupied, choose another'.format(ship_obj.getName()))
             game.SetUpShips(self, ship_obj)
         else:
-            self.current_battlefield.modifyBoard(ship_obj)
-            self.current_battlefield.printBoard()
+            self.p1bf.modifyBoardShips(ship_obj)
+            self.p1bf.printBoard()
 
     def SetUpBoard(self):
-        self.current_battlefield.buildBoard()
-        self.current_battlefield.printBoard()
+        self.p1bf.buildBoard()
+        self.p1bf.printBoard()
         for shipname in self.ships.keys():
             ship_obj = self.ships[shipname]
             game.SetUpShips(self, ship_obj)
