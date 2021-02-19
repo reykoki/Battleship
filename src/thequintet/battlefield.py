@@ -6,6 +6,11 @@ class battlefield:
     def __init__(self):
         self.grid = [[0] * 10 for _ in range(10)]
 
+        self.game_board = []
+        self.board_size = 10
+        self.number_coordinates = ['1','2','3','4','5','6','7','8','9', '10']
+        self.letter_coordinates = [' ','A','B','C','D','E','F','G','H','I','J']
+
     def set_grid_space(self, row, col, val):
         self.grid[row][col] = val
 
@@ -42,5 +47,36 @@ class battlefield:
         else:
             self.set_grid_space(row, col, 0)
             outcome = self.result_of_hit(val)
+        #update visualization
+        self.modifyBoardAttacks(attack_coord, outcome)
+        self.printBoard()
         return outcome
+
+    def buildBoard(self):
+        self.game_board.append(self.letter_coordinates)
+
+        for number in self.number_coordinates:
+            row = []
+            row.append(number)
+            row.extend(['-'] * self.board_size)
+            self.game_board.append(row)
+
+    def printBoard(self):
+        print('\n'.join([''.join(['{:4}'.format(item) for item in row])
+                         for row in self.game_board]))
+
+    def modifyBoardAttacks(self, attack_coord, outcome):
+        row_coord = attack_coord[0]
+        col_coord = attack_coord[1]
+        if outcome == 'MISS':
+            self.game_board[row_coord+1][col_coord+1] = 'O'
+        else:
+            self.game_board[row_coord+1][col_coord+1] = 'X'
+
+    def modifyBoardShips(self, ship_obj):
+        for coordinate in ship_obj.coordinates:
+            row_coord = coordinate[0]
+            col_coord = coordinate[1]
+            self.game_board[row_coord+1][col_coord+1] = '&'
+
 

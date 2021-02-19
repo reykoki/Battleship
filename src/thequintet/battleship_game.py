@@ -8,6 +8,7 @@ from UserInput import AttackInputCoordinate
 from player2 import player2
 
 
+
 class game:
 
     #TODO: add 2nd player
@@ -53,13 +54,19 @@ class game:
         if not self.p2bf.place_on_board(coords, ship_name):
             self.AI_SetUpShips(ship_obj)
 
+
     def SetUpShips(self, ship_obj):
         InitialInputCoordinate.get_user_input(ship_obj)
         if not self.p1bf.place_on_board(ship_obj.coordinates, ship_obj.getName()):
             print('\nthe space you chose to put your {} is already occupied, choose another'.format(ship_obj.getName()))
             self.SetUpShips(ship_obj)
+        else:
+            self.p1bf.modifyBoardShips(ship_obj)
+            self.p1bf.printBoard()
 
     def SetUpBoard(self):
+        self.p1bf.buildBoard()
+        self.p1bf.printBoard()
         for shipname in self.ships.keys():
             print(self.ships[shipname].__dict__)
             ship_obj = self.ships[shipname]
