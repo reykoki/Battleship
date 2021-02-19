@@ -5,11 +5,11 @@ from itertools import chain
 class battlefield:
     def __init__(self):
         self.grid = [[0] * 10 for _ in range(10)]
-
         self.game_board = []
         self.board_size = 10
-        self.number_coordinates = ['1','2','3','4','5','6','7','8','9', '10']
+        self.number_coordinates = ['1','2','3','4','5','6','7','8','9','10']
         self.letter_coordinates = [' ','A','B','C','D','E','F','G','H','I','J']
+        self.buildBoard()
 
     def set_grid_space(self, row, col, val):
         self.grid[row][col] = val
@@ -47,7 +47,7 @@ class battlefield:
         else:
             self.set_grid_space(row, col, 0)
             outcome = self.result_of_hit(val)
-        #update visualization
+        # update visualization
         self.modifyBoardAttacks(attack_coord, outcome)
         self.printBoard()
         return outcome
@@ -66,10 +66,11 @@ class battlefield:
                          for row in self.game_board]))
 
     def modifyBoardAttacks(self, attack_coord, outcome):
-        print(attack_coord)
+        # print(attack_coord)
         row_coord = attack_coord[0]
         col_coord = attack_coord[1]
-        print(self.game_board)
+        # print("game board", self.game_board)
+
         if outcome == 'MISS':
             self.game_board[row_coord+1][col_coord+1] = 'O'
         else:
@@ -80,5 +81,3 @@ class battlefield:
             row_coord = coordinate[0]
             col_coord = coordinate[1]
             self.game_board[row_coord+1][col_coord+1] = '&'
-
-

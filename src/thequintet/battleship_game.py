@@ -65,10 +65,10 @@ class game:
             self.p1bf.printBoard()
 
     def SetUpBoard(self):
-        self.p1bf.buildBoard()
+        # self.p1bf.buildBoard()
         self.p1bf.printBoard()
         for shipname in self.ships.keys():
-            print(self.ships[shipname].__dict__)
+            # print(self.ships[shipname].__dict__)
             ship_obj = self.ships[shipname]
             self.SetUpShips(ship_obj)
             self.AI_SetUpShips(ship_obj)

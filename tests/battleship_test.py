@@ -1,10 +1,7 @@
-import Battleship from Battleship
+from Battleship import Battleship
 
-
-
-# test that all ships have the appropiate number of coordinates
+# test that all ships have the appropriate number of coordinates
 def ship_length(ship):
-
     name = ship.getName()
     length = len(ship.getCoordinates())
 
