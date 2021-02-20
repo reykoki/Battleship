@@ -29,7 +29,7 @@ class battlefield:
         # this only works if there is only one of each ship
         # it checks if there are any other gridspaces with that ship name
         if ship_name in chain(*self.grid):
-            outcome = 'You have hit your opponenets {}'.format(ship_name)
+            outcome = 'You have hit your opponents {}'.format(ship_name)
         else:
             if all(row == [0]*10 for row in self.grid):
                 # if all rows are empty then you've sunk all the ships
@@ -49,7 +49,7 @@ class battlefield:
             outcome = self.result_of_hit(val)
         # update visualization
         self.modifyBoardAttacks(attack_coord, outcome)
-        self.printBoard()
+
         return outcome
 
     def buildBoard(self):
@@ -66,16 +66,14 @@ class battlefield:
                          for row in self.game_board]))
 
     def modifyBoardAttacks(self, attack_coord, outcome):
-        # print(attack_coord)
         row_coord = attack_coord[0]
         col_coord = attack_coord[1]
-        # print("game board", self.game_board)
 
         if outcome == 'MISS':
             self.game_board[row_coord+1][col_coord+1] = 'O'
         else:
             self.game_board[row_coord+1][col_coord+1] = 'X'
-
+        self.printBoard()
     def modifyBoardShips(self, ship_obj):
         for coordinate in ship_obj.coordinates:
             row_coord = coordinate[0]
