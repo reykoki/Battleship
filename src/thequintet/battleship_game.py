@@ -26,8 +26,12 @@ class game:
         self.p2bf = battlefield()
         self.p2 = player2()
 
-    def player1_move(self):
-        attack_coord = AttackInputCoordinate.get_user_input()
+    def player1_move(self, test = None, test_input = None):
+        if test is True:
+            attack_coord = test_input
+        else:
+            attack_coord = AttackInputCoordinate.get_user_input()
+
         outcome = self.p2bf.attack(attack_coord)
         print(outcome)
         if 'YOU WIN' in outcome:
@@ -42,10 +46,10 @@ class game:
             return False
         return True
 
-    def play_game(self):
+    def play_game(self, test1 = None, test_input1 = None):
         play = True
         while play == True:
-            play = self.player1_move()
+            play = self.player1_move(test = test1, test_input = test_input1)
             play = self.player2_move()
 
 
