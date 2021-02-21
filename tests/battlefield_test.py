@@ -2,7 +2,7 @@ import sys
 import numpy as np
 import os
 import string
-sys.path.append('../src/thequintet')
+sys.path.append('../battleship')
 from battlefield import battlefield
 from Ship import Battleship
 

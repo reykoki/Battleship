@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../src/thequintet')
+sys.path.append('../battleship')
 import unittest
 from unittest import mock
 from unittest import TestCase

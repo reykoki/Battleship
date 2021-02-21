@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../src/thequintet')
+sys.path.append('../battleship')
 
 import unittest
 from player2 import player2
