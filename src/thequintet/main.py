@@ -5,6 +5,7 @@ from battleship_game import game
 
 
 def main():
+    '''Runs main game loop'''
     curr_game = game()
     curr_game.SetUpBoard()
 
