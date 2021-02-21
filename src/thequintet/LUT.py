@@ -24,10 +24,9 @@ class LUT():
         return LUT
 
     @classmethod
-
-    def get_Attack_LUT(self):
-        '''Creates attack LUT. Same size as ship LUT.'''
-        attack_LUT = self()
+    def get_Attack_LUT(self, row_size = 10, col_size = 10):
+        attack_LUT = self(row_size, col_size)
+        return attack_LUT.create_LUT()
 
 class Ship_LUT(LUT):
     '''Creates ship LUT.'''
