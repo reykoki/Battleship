@@ -64,7 +64,6 @@ class TestInput(TestCase):
                       ['9', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
                       ['10', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']]
         self.assertEqual(self.bf.game_board, board_miss)
-
     def test_CorrectShips(self):
         '''Check if ships are placed in correct coordinates.'''
         ship_test = Battleship(length=2, coordinates=[[0, 0], [1, 0]])

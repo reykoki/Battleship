@@ -7,7 +7,7 @@ from unittest import mock
 from unittest import TestCase
 from subprocess import Popen, PIPE, STDOUT
 
-sys.path.append('../src/thequintet')
+sys.path.append('../battleship')
 from battleship_game import game
 from Ship import Battleship
 from UserInput import *
@@ -66,3 +66,6 @@ class TestInput(TestCase):
             assert True
         else:
             assert False
+# to run:
+# python -m unittest -v test_UserInput.py
+
