@@ -50,3 +50,9 @@ class Battleship:
         Set ship coordinates on board
         """
         self.coordinates = ship_coords
+
+    def getCoordinates(self):
+        """
+        Set ship coordinates on board
+        """
+        return self.coordinates
