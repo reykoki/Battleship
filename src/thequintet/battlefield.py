@@ -48,7 +48,7 @@ class battlefield:
             self.set_grid_space(row, col, 0)
             outcome = self.result_of_hit(val)
         # update visualization
-        self.modifyBoardAttacks(attack_coord, outcome)
+        #self.modifyBoardAttacks(attack_coord, outcome)
 
         return outcome
 
