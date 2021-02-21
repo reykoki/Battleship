@@ -62,3 +62,5 @@ class TestInput(TestCase):
         else:
             assert False
 
+# to run:
+# python -m unittest -v test_UserInput.py
