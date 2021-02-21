@@ -19,19 +19,24 @@ This repo includes:
 To Play:
 
 
+```
     python main.py
+```
 
 - testing suite
     - located in ./tests/
 
 
+```
     python -m unittest -v ./tests/*
+```
 
 - .gitignore to exclude any superfluous files/directories
 - requirements.txt to give the user a list of any necessary packages
 
-
+```
     pip install -r requirements.txt
+```
 
 
 
