@@ -5,7 +5,7 @@ import string
 import unittest
 from unittest import mock
 from unittest import TestCase
-sys.path.append('../src/thequintet')
+sys.path.append('../battleship')
 from battlefield import battlefield
 from Ship import Battleship
 

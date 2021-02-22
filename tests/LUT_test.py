@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append('../src/thequintet')
+sys.path.append('../battleship')
 
 from LUT import LUT
 from LUT import Ship_LUT
