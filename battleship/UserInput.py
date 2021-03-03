@@ -26,21 +26,25 @@ class InputCoordinate(object):
         Stores transformed coordinates if inside game board
         Prints invalid choice of coordinates message
         '''
+        #TODO: make it so that if you change the board dimensions, this will also be changed
+        valid_cols = [chr(i) for i in range(ord('A'),ord('J')+1)]
+        valid_rows = [str(i) for i in range(1,11)]
         input_coord = self.input_coord
+        good_coords = True
         # convert letter to number with index 0
         try:
-            col = ord(input_coord[0].lower()) - 97
-            row = int(input_coord[1:]) - 1
+            col = input_coord[0].upper()
+            row = input_coord[1:]
         except:
             return
 
-        if len(input_coord[1:]) > 2 :
-            print('Invalid length of coordinates! Try this format: A1 - J10')
-        elif not 0 <= col <= 9:
+        if col not in valid_cols:
             print('Invalid column choice: choose a letter A-J')
-        elif not 0 <= row <= 9:
+            good_coords = False
+        if row not in valid_rows:
             print('Invalid row choice: choose a number 1-10')
-        else:
+            good_coords = False
+        if good_coords:
             # transformed return with index 0
             self.trans_coord = (row, col)
 
@@ -66,7 +70,7 @@ class InitialInputCoordinate(InputCoordinate):
         '''
         ship_coords = []
         for idx in range(self.ship_length):
-            next_coord = (self.trans_coord[0] + idx, self.trans_coord[1])
+            next_coord = (chr(ord(self.trans_coord[0])+ idx), self.trans_coord[1])
             ship_coords.append(next_coord)
         return ship_coords
 
@@ -77,7 +81,7 @@ class InitialInputCoordinate(InputCoordinate):
         '''
         ship_coords = []
         for idx in range(self.ship_length):
-            next_coord = (self.trans_coord[0], self.trans_coord[1] + idx)
+            next_coord = (self.trans_coord[0], str(int(self.trans_coord[1]) + idx))
             ship_coords.append(next_coord)
         return ship_coords
 
@@ -143,7 +147,7 @@ class InitialInputCoordinate(InputCoordinate):
         input_coordinates = cls(start_coord, direction, ship_obj.getLength())
         ship_coords = input_coordinates.check_input(ship_obj)
         if len(ship_coords) > 0: # check length of ship coordinates
-            ship_obj.setCoordinates(ship_coords)
+            return ship_coords
         else:
             cls.get_user_input(ship_obj)
 

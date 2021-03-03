@@ -45,13 +45,13 @@ class player2:
             init_coord = random.choice(ship_obj.getHorizontalLUT())
             coords = []
             for idx in range(ship_obj.getLength()):
-                next_coord = (init_coord[0], init_coord[1] + idx)
+                next_coord = (init_coord[0], chr(ord(init_coord[1]) + idx))
                 coords.append(next_coord)
         else:
             init_coord = random.choice(ship_obj.getVerticalLUT())
             coords = []
             for idx in range(ship_obj.getLength()):
-                next_coord = (init_coord[0] + idx, init_coord[1])
+                next_coord = (str(int(init_coord[0]) + idx), init_coord[1])
                 coords.append(next_coord)
         return coords, ship_obj.getName()
 
