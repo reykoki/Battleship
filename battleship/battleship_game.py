@@ -1,4 +1,4 @@
-from Ship import Battleship
+from Ship import *
 from battlefield import battlefield
 from UserInput import InputCoordinate
 from UserInput import InitialInputCoordinate
@@ -15,17 +15,14 @@ class game:
         p2: player2 class for AI bot
     '''
 
-    def __init__(self):
+    def __init__(self, ships = ['Minesweeper', 'Destroyer', 'Battleship']):
         '''Initializes game class.
         Initialized list of ships to start game. Each player gets one Minesweeper,
         one Destroyer and one Battleship
         Initializes player 1 and player 2's battlefields
         Initializes player2 as AI bot
         '''
-        self.ships = {'Minesweeper': Battleship('Minesweeper', 2)}
-        #self.ships = {'Minesweeper': Battleship('Minesweeper', 2),
-        #              'Destroyer': Battleship('Destroyer', 3),
-        #              'Battleship': Battleship()}
+        self.ships = ships
         # player 1
         self.p1bf = battlefield()
         # player 2
@@ -42,11 +39,7 @@ class game:
         '''
         attack_coord = AttackInputCoordinate.get_user_input()
         outcome = self.p2bf.attack(attack_coord)
-        self.p1bf.modifyBoardAttacks(attack_coord, outcome)
-        print(outcome)
-        if 'YOU WIN' in outcome:
-            return False
-        return True
+        return outcome
 
     def player2_move(self):
         '''Processes player 2's moves.
@@ -57,19 +50,27 @@ class game:
             True: if game should continue
         '''
         attack_coord = self.p2.get_attack_coord()
-        outcome = self.p1bf.attack(attack_coord)
-        self.p2bf.modifyBoardAttacks(attack_coord, outcome)
-        if 'YOU WIN' in outcome:
-            print('ALL YOUR SHIPS ARE SUNK, you lose')
+        outcome = self.p1bf.attack(attack_coord, True)
+        return outcome
+
+    def check_outcome(self, outcome):
+        print('\n', outcome, '\n')
+        if 'last ship' in outcome:
             return False
-        return True
+        else:
+            return True
 
     def play_game(self):
         '''Main game loop'''
         play = True
         while play:
-            play = self.player1_move()
-            play = self.player2_move()
+            outcome_p1 = self.player1_move()
+            play = self.check_outcome(outcome_p1)
+            outcome_p2 = self.player2_move()
+            play = self.check_outcome(outcome_p2)
+            self.p2bf.printBoardForOpponent()
+            self.p1bf.printYourBoard()
+
 
     def AI_SetUpShips(self, ship_obj):
         '''Set up AI bot ships on player2's game board.
@@ -86,24 +87,19 @@ class game:
         Args:
             ship_obj: used to place ship on player1's game board
         '''
-        InitialInputCoordinate.get_user_input(ship_obj)
-        if not self.p1bf.place_on_board(ship_obj.coordinates, ship_obj.getName()):
+        ship_coords = InitialInputCoordinate.get_user_input(ship_obj)
+        if not self.p1bf.place_on_board(ship_coords, ship_obj.getName(), True):
             print('\nthe space you chose to put your {} is already occupied, '
                   'choose another'.format(ship_obj.getName()))
             self.SetUpShips(ship_obj)
-        else:
-            self.p1bf.modifyBoardShips(ship_obj)
-            self.p1bf.printBoard()
 
     def SetUpBoard(self):
         '''Sets up game board for player1 and player2.
         Sets up ships for player1 using input and randomly for player2
         Calls main game loop after setup
         '''
-        self.p1bf.printBoard()
-        for shipname in self.ships.keys():
-            # print(self.ships[shipname].__dict__)
-            ship_obj = self.ships[shipname]
+        for shipname in self.ships:
+            ship_obj = eval(shipname+'()')
             self.SetUpShips(ship_obj)
             self.AI_SetUpShips(ship_obj)
 

@@ -3,14 +3,14 @@
 from LUT import Ship_LUT
 
 
-class Battleship:
+class Ship:
     '''Battleship class used to store ship type, length,
     coordinates and look up tables.
     Attributes:
         coordinates: ship's location coordinates
     '''
 
-    def __init__(self, name='Battleship', length=4, coordinates=[]):
+    def __init__(self, name, length):
         '''Initialized Battlefield class.
         Sets ship name, length, coordinates and gets ship's horizontal
         and vertical LUTs
@@ -21,7 +21,7 @@ class Battleship:
         '''
         self._name = name
         self._length = length
-        self.coordinates = coordinates
+        self.coordinates = []
         self._LUT_v = Ship_LUT.get_Ship_LUT('v', self._length)
         self._LUT_h = Ship_LUT.get_Ship_LUT('h', self._length)
 
@@ -55,3 +55,15 @@ class Battleship:
     def getCoordinates(self):
         '''Get ship coordinates on board.'''
         return self.coordinates
+
+class Minesweeper(Ship):
+    def __init__(self):
+        super().__init__(name='Minesweeper', length=2)
+
+class Destroyer(Ship):
+    def __init__(self):
+        super().__init__(name='Destroyer', length=3)
+
+class Battleship(Ship):
+    def __init__(self):
+        super().__init__(name='Battleship', length=4)

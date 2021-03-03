@@ -18,8 +18,8 @@ class LUT():
         Returns:
             LUT: look up table with all rows and columns
         '''
-        possible_rows = list(range(self.row_size))
-        possible_cols = list(range(self.col_size))
+        possible_rows = [str(i) for i in range(1, self.row_size+1)]
+        possible_cols = [chr(i) for i in range(ord('A'),ord('Z')+1)][:self.col_size]
         LUT = list(itertools.product(possible_rows, possible_cols))
         return LUT
 
