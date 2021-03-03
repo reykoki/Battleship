@@ -21,7 +21,6 @@ class Ship:
         '''
         self._name = name
         self._length = length
-        self.coordinates = []
         self._LUT_v = Ship_LUT.get_Ship_LUT('v', self._length)
         self._LUT_h = Ship_LUT.get_Ship_LUT('h', self._length)
 
@@ -44,17 +43,6 @@ class Ship:
     def getHorizontalLUT(self):
         '''Returns ship's horizontal LUT.'''
         return self._LUT_h
-
-    def setCoordinates(self, ship_coords):
-        '''Set ship coordinates on board.
-        Args:
-            ship_coords: list of ship coordinates
-        '''
-        self.coordinates = ship_coords
-
-    def getCoordinates(self):
-        '''Get ship coordinates on board.'''
-        return self.coordinates
 
 class Minesweeper(Ship):
     def __init__(self):
