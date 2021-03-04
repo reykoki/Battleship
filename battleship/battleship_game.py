@@ -36,9 +36,18 @@ class game:
             False: if player1 won the game
             True: if game should continue
         '''
-        attack_coord = AttackInputCoordinate.get_user_input()
-        outcome = self.p2bf.attack(attack_coord)
-        return outcome
+        #self.p2bf.sonar_unlocked = True
+        attack_coord, activated = AttackInputCoordinate.get_user_input(self.p2bf.sonar_unlocked)
+        if activated:
+            if self.p2bf.sonar_remaining <= 0:
+                print("No more sonars remaining")
+                return self.player1_move()
+            else:
+                self.p2bf.sonar_activated(attack_coord)
+                return
+        else:
+            outcome = self.p2bf.attack(attack_coord)
+            return outcome
 
     def player2_move(self):
         '''Processes player 2's moves.
@@ -60,13 +69,16 @@ class game:
 
     def play_game(self):
         '''Main game loop'''
-        outcome_p1 = self.player1_move()
-        self.check_outcome(outcome_p1)
-        outcome_p2 = self.player2_move()
-        self.check_outcome(outcome_p2)
-        self.p2bf.printBoardForOpponent()
-        self.p1bf.printYourBoard()
-        self.play_game()
+        play = True
+        while play:
+            outcome_p1 = self.player1_move()
+            if outcome_p1 is not None:#sonar
+                self.check_outcome(outcome_p1)
+            outcome_p2 = self.player2_move()
+            self.check_outcome(outcome_p2)
+            self.p2bf.printBoardForOpponent()
+            self.p1bf.printYourBoard()
+            self.play_game()
 
 
     def AI_SetUpShips(self, ship_obj):
