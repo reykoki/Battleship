@@ -39,10 +39,10 @@ class InputCoordinate(object):
             return
 
         if col not in valid_cols:
-            print('Invalid column choice: choose a letter A-J')
+            print('\nInvalid column choice: choose a letter A-J')
             good_coords = False
         if row not in valid_rows:
-            print('Invalid row choice: choose a number 1-10')
+            print('\nInvalid row choice: choose a number 1-10')
             good_coords = False
         if good_coords:
             # transformed return with index 0
@@ -70,7 +70,7 @@ class InitialInputCoordinate(InputCoordinate):
         '''
         ship_coords = []
         for idx in range(self.ship_length):
-            next_coord = (chr(ord(self.trans_coord[0])+ idx), self.trans_coord[1])
+            next_coord = (str(int(self.trans_coord[0]) + idx), self.trans_coord[1])
             ship_coords.append(next_coord)
         return ship_coords
 
@@ -81,7 +81,7 @@ class InitialInputCoordinate(InputCoordinate):
         '''
         ship_coords = []
         for idx in range(self.ship_length):
-            next_coord = (self.trans_coord[0], str(int(self.trans_coord[1]) + idx))
+            next_coord = (self.trans_coord[0], chr(ord(self.trans_coord[1])+idx))
             ship_coords.append(next_coord)
         return ship_coords
 
@@ -92,7 +92,7 @@ class InitialInputCoordinate(InputCoordinate):
             False: if trans_coord not in LUT
         '''
         if self.trans_coord not in LUT:
-            print("Invalid coordinates, the end of the ship is off the board!!")
+            print("\nInvalid coordinates, the end of the ship is off the board, choose another coordinate.")
             return False
         else:
             return True
@@ -110,12 +110,16 @@ class InitialInputCoordinate(InputCoordinate):
             LUT = ship_obj.getHorizontalLUT()
             if self.on_board(LUT):
                 ship_coords = self.get_all_coords_h()
+            else:
+                return ()
         elif direction == 'v':
             LUT = ship_obj.getVerticalLUT()
             if self.on_board(LUT):
                 ship_coords = self.get_all_coords_v()
+            else:
+                return ()
         else:
-            print('Invalid directions: please choose between h and v')
+            print('\nInvalid directions: please choose between h and v')
             return ()
         return ship_coords
 
@@ -149,7 +153,7 @@ class InitialInputCoordinate(InputCoordinate):
         if len(ship_coords) > 0: # check length of ship coordinates
             return ship_coords
         else:
-            cls.get_user_input(ship_obj)
+            return cls.get_user_input(ship_obj)
 
 
 class AttackInputCoordinate(InputCoordinate):
@@ -188,5 +192,5 @@ class AttackInputCoordinate(InputCoordinate):
         if len(attack_coord.trans_coord) == 2:
             return attack_coord.trans_coord, activated
         else:
-            print('Try again with valid attack coordinates')
+            print('\nTry again with valid attack coordinates')
             return cls.get_user_input()
