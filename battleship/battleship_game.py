@@ -1,6 +1,5 @@
 from Ship import *
 from battlefield import battlefield
-from UserInput import InputCoordinate
 from UserInput import InitialInputCoordinate
 from UserInput import AttackInputCoordinate
 from player2 import player2

@@ -52,6 +52,7 @@ class battlefield:
             False: if ship wasn't successfully placed on board
                    due to space already being occupied
         '''
+        print(ship_coords)
         for coord in ship_coords:
             row = coord[0]
             col = coord[1]

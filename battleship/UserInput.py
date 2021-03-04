@@ -149,7 +149,7 @@ class InitialInputCoordinate(InputCoordinate):
         if len(ship_coords) > 0: # check length of ship coordinates
             return ship_coords
         else:
-            cls.get_user_input(ship_obj)
+            return cls.get_user_input(ship_obj)
 
 
 class AttackInputCoordinate(InputCoordinate):
