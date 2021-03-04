@@ -178,7 +178,7 @@ class AttackInputCoordinate(InputCoordinate):
         '''
         activated = False
         input_coord = input('Provide the coordinate you would like to attack or enter S to activate sonar: ')
-        if input_coord == 'S':
+        if input_coord == 'S' or input_coord == 's':
             if not sonar_unlocked:
                 print('You must sink a ship before unlocking sonar. \n')
                 return cls.get_user_input()

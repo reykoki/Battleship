@@ -136,22 +136,41 @@ class battlefield:
         col = attack_coord[1]
         for r in range(-2,3):
             new_col = chr(ord(col)+r)
-            if self.grid[new_col][row] == '-':
-                self.set_grid_space(row, new_col, '#')
-            elif self.grid[new_col][row] == 'X':
-                self.set_grid_space(row, new_col, 'X')
-            elif self.grid[new_col][row] == 'O':
-                self.set_grid_space(row, new_col, 'O')
-            elif (col,new_col) in self.shipinfo.keys():
-                self.set_grid_space(row, new_col, '?')
+            if new_col in self.grid:
+                if self.grid[new_col][row] == '-':
+                    self.set_grid_space(row, new_col, '#')
+                elif self.grid[new_col][row] == 'X':
+                    self.set_grid_space(row, new_col, 'X')
+                elif self.grid[new_col][row] == 'O':
+                    self.set_grid_space(row, new_col, 'O')
+                elif (col,new_col) in self.shipinfo.keys():
+                    self.set_grid_space(row, new_col, '?')
         for c in range(-2,3):
             new_row = chr(ord(row)+c)
-            if self.grid[col][new_row] == '-' or self.grid[col][new_row] == '#':
-                self.set_grid_space(new_row, col, '#')
-            elif self.grid[col][new_row] == 'X':
-                self.set_grid_space(new_row, col, 'X')
-            elif self.grid[col][new_row] == 'O':
-                self.set_grid_space(new_row, col, 'O')
-            elif (col,new_row) in self.shipinfo.keys():
-                self.set_grid_space(new_row, col, '?')
+            if new_row in self.grid[col]:
+                if self.grid[col][new_row] == '-' or self.grid[col][new_row] == '#':
+                    self.set_grid_space(new_row, col, '#')
+                elif self.grid[col][new_row] == 'X':
+                    self.set_grid_space(new_row, col, 'X')
+                elif self.grid[col][new_row] == 'O':
+                    self.set_grid_space(new_row, col, 'O')
+                elif (col,new_row) in self.shipinfo.keys():
+                    self.set_grid_space(new_row, col, '?')
+
+        for i in [-1,1]:
+            new_col = chr(ord(col)+i)
+            for j in [-1,1]:
+                new_row = chr(ord(row) + j)
+                print(new_col, new_row)
+                if new_col in self.grid and new_row in self.grid[new_col]:
+                    print('yes')
+                    if self.grid[new_col][new_row] == '-' or self.grid[new_col][new_row] == '#':
+                        self.set_grid_space(new_row, new_col, '#')
+                    elif self.grid[new_col][new_row] == 'X':
+                        self.set_grid_space(new_row, new_col, 'X')
+                    elif self.grid[new_col][new_row] == 'O':
+                        self.set_grid_space(new_row, new_col, 'O')
+                    elif (new_col, new_row) in self.shipinfo.keys():
+                        self.set_grid_space(new_row, new_col, '?')
+
 
