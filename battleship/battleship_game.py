@@ -37,7 +37,7 @@ class game:
             False: if player1 won the game
             True: if game should continue
         '''
-        self.p2bf.sonar_unlocked = True
+        #self.p2bf.sonar_unlocked = True
         attack_coord, activated = AttackInputCoordinate.get_user_input(self.p2bf.sonar_unlocked)
         if activated:
             if self.p2bf.sonar_remaining <= 0:
