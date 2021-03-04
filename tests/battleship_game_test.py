@@ -52,10 +52,25 @@ class TestInput(TestCase):
         ship = Battleship()
         bf_game.AI_SetUpShips(ship)
         grid = bf_game.p2bf.grid
-        if grid.isin(['Battleship']).any().any():
-            assert True
-        else:
-            assert False
+        self.assertTrue(grid.isin(['Battleship']).any().any())
+
+    def test_player2_move(self):
+        bf_game = game()
+        outcome = bf_game.player2_move()
+        bf_game.AI_SetUpShips(Battleship())
+        self.assertIsInstance(outcome, str)
+        attack_coord = bf_game.p2.get_attack_coord()
+        self.assertIsInstance(attack_coord[0], str)
+
+
+
+    def test_end_game(self):
+        bf_game = game()
+        with self.assertRaises(SystemExit) as cm:
+            bf_game.check_outcome('testing end of game when last ship has been sunk')
+
+
+
     @mock.patch('builtins.input', side_effect=['S', 'E5'])
     def test_sonar(self, mock):
         bf_game = game()
@@ -78,11 +93,7 @@ class TestInput(TestCase):
         grid['F']['5'] = '#'
         grid['G']['5'] = '#'
         ne = (bf_game.p2bf.grid != grid).any(1)
-        
-        if ne.all():
-            assert False
-        else:
-            assert True
+        self.assertFalse(ne.all())
 
 
 
