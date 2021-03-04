@@ -161,9 +161,7 @@ class battlefield:
             new_col = chr(ord(col)+i)
             for j in [-1,1]:
                 new_row = chr(ord(row) + j)
-                print(new_col, new_row)
                 if new_col in self.grid and new_row in self.grid[new_col]:
-                    print('yes')
                     if self.grid[new_col][new_row] == '-' or self.grid[new_col][new_row] == '#':
                         self.set_grid_space(new_row, new_col, '#')
                     elif self.grid[new_col][new_row] == 'X':
