@@ -11,27 +11,21 @@ sys.path.append('../battleship')
 from battleship_game import game
 from Ship import Battleship
 from UserInput import *
+import pandas as pd
 
 class TestInput(TestCase):
-    '''Test class used to mock inputs and test battleship game functionality.'''
+    #Test class used to mock inputs and test battleship game functionality
 
     @mock.patch('builtins.input', side_effect=['A2'])
     def test_AttackMove(self, mock):
         '''Test input attack coordinates are correct.'''
         bf_game = game()
         bf_game.player1_move()
-        self.assertEqual(bf_game.p1bf.game_board,
-                         [[' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
-                          ['1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['2', 'O', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['3', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['5', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['6', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['7', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['8', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['9', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['10', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']])
+        grid = pd.DataFrame('-', index=[str(i) for i in range(1, 11)],
+                            columns=[chr(i) for i in range(ord('A'), ord('J') + 1)])
+        grid['A']['2'] = 'O'
+        self.assertEqual(bf_game.p2bf.grid['A']['2'], grid['A']['2'])
+
 
     @mock.patch('builtins.input', side_effect=['A1','D5','J9'])
     def test_PlayerTurns(self, mock):
@@ -42,30 +36,56 @@ class TestInput(TestCase):
         bf_game.player1_move()
         bf_game.player2_move()
         bf_game.player1_move()
-        self.assertEqual(bf_game.p1bf.game_board,
-                         [[' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
-                          ['1', 'O', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['2', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['3', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['5', '-', '-', '-', 'O', '-', '-', '-', '-', '-', '-'],
-                          ['6', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['7', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['8', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                          ['9', '-', '-', '-', '-', '-', '-', '-', '-', '-', 'O'],
-                          ['10', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']])
+        grid = pd.DataFrame('-', index=[str(i) for i in range(1, 11)],
+                            columns=[chr(i) for i in range(ord('A'), ord('J') + 1)])
+        grid['A']['1'] = 'O'
+        grid['D']['5'] = 'O'
+        grid['J']['9'] = 'O'
+        self.assertEqual(bf_game.p2bf.grid['A']['1'],grid['A']['1'])
+        self.assertEqual(bf_game.p2bf.grid['D']['5'],grid['D']['5'])
+        self.assertEqual(bf_game.p2bf.grid['J']['9'],grid['J']['9'])
 
     @mock.patch('builtins.input', side_effect=[])
     def test_AIShips(self, mock):
-        '''Test AI Ship Setup Board.'''
+        #Test AI Ship Setup Board.
         bf_game = game()
         ship = Battleship()
         bf_game.AI_SetUpShips(ship)
         grid = bf_game.p2bf.grid
-        if any('Battleship' in sl for sl in grid):
+        if grid.isin(['Battleship']).any().any():
             assert True
         else:
             assert False
+    @mock.patch('builtins.input', side_effect=['S', 'E5'])
+    def test_sonar(self, mock):
+        bf_game = game()
+        bf_game.p2bf.sonar_unlocked = True
+        bf_game.player1_move()
+        grid = pd.DataFrame('-', index=[str(i) for i in range(1, 11)],
+                            columns=[chr(i) for i in range(ord('A'), ord('J') + 1)])
+        grid['E']['3'] = '#'
+        grid['E']['4'] = '#'
+        grid['E']['5'] = '#'
+        grid['E']['6'] = '#'
+        grid['E']['7'] = '#'
+        grid['D']['4'] = '#'
+        grid['D']['6'] = '#'
+        grid['F']['4'] = '#'
+        grid['F']['6'] = '#'
+        grid['C']['5'] = '#'
+        grid['D']['5'] = '#'
+        grid['E']['5'] = '#'
+        grid['F']['5'] = '#'
+        grid['G']['5'] = '#'
+        ne = (bf_game.p2bf.grid != grid).any(1)
+        
+        if ne.all():
+            assert False
+        else:
+            assert True
+
+
+
 # to run:
 # python -m unittest -v test_UserInput.py
 
