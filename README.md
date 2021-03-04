@@ -41,6 +41,7 @@ pip install -r requirements.txt
 
 ## Code Coverage
 
+<pre>
 Name                      Stmts   Miss  Cover   Missing
 -------------------------------------------------------
 LUT_test.py                  14      0   100%
@@ -51,6 +52,7 @@ battleship_test.py           18      0   100%
 player2_test.py              16      0   100%
 -------------------------------------------------------
 TOTAL                       195      0   100%
+</pre>
 
 
 
