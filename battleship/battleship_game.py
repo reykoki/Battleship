@@ -77,8 +77,8 @@ class game:
         coords, ship_name = self.p2.place_ship(ship_obj)
         if not self.p2bf.place_on_board(coords, ship_name):
             self.AI_SetUpShips(ship_obj)
-        print('AI BOARD')
-        self.p2bf.printYourBoard()
+        #print('AI BOARD')
+        #self.p2bf.printYourBoard()
 
 
     def SetUpShips(self, ship_obj):
