@@ -20,12 +20,20 @@ class battlefield:
         self.grid = pd.DataFrame('-', index=[str(i) for i in range(1, 11)], columns=[chr(i) for i in range(ord('A'),ord('J')+1)])
         self.shipnames = []
         self.shipinfo = {}
+        self.CQ = {}
         self.sonar_unlocked = False
         self.sonar_remaining = 2
+
+    def addCaptainsQuarters(self, ship_coords):
+        CQ_row = ship_coords[-2][0]
+        CQ_col = ship_coords[-2][1]
+        self.grid[CQ_col][CQ_row] = self.grid[CQ_col][CQ_row] + 'CQ' + str(len(ship_coords))
+        self.CQ[(CQ_col, CQ_row)] = ship_coords
 
     def printBoardForOpponent(self):
         print('\n ======= OPPONENTS BOARD ======\n')
         board = self.grid
+        board = board.replace(".*CQ.*", "-", regex=True)
         for shipname in self.shipnames:
             board = board.replace(shipname, '-')
         print(board, '\n')
@@ -65,6 +73,7 @@ class battlefield:
                     self.shipnames.append(ship_name)
             else:
                 return False
+        self.addCaptainsQuarters(ship_coords)
         if print_board:
             self.printYourBoard()
         return True
@@ -79,7 +88,8 @@ class battlefield:
         Returns:
             outcome: string detailing results of hit
         '''
-        if ship_name in self.shipinfo.values():
+        # search the board for other instances of the ship
+        if ((self.grid==ship_name).any()==True).any():
             # TODO: decide if you should be able to see which ship you hit
             outcome = 'You have hit one of your opponents ships!'
             outcome_p2 = 'Your opponent has his your {}'.format(ship_name)
@@ -93,6 +103,22 @@ class battlefield:
                 outcome_p2 = 'Your opponent has sunk your {}'.format(ship_name)
         return outcome, outcome_p2
 
+    def CQ_hit(self, val, row, col):
+        if int(val[-1]) > 2:
+            self.grid[col][row] = val[:-1] + '1'
+            outcome = 'You have damaged a ships captains quarters'
+            outcome_p2 = 'Your opponent has damaged your {} captains quarters'.format(val[:-3])
+        else:
+            for coord in self.CQ[(col, row)]:
+                row = coord[0]
+                col = coord[1]
+                self.set_grid_space(row, col, 'X')
+            outcome, outcome_p2 = self.result_of_hit(val[:-3])
+            outcome = 'You hit the captain quarters of your opponents ship. \n' + outcome
+            outcome_p2 = 'Your opponent has hit your captains quarters.\n' + outcome_p2
+        return outcome, outcome_p2
+
+
     def attack(self, attack_coord, p2_attack=False):
         '''Finds result of attack.
         Args:
@@ -103,21 +129,25 @@ class battlefield:
         row = attack_coord[0]
         col = attack_coord[1]
         val = self.grid[col][row]
-        if self.grid[col][row] == '-' or self.grid[col][row] == '#':
+
+        if val == '-' or val == '#':
             outcome = 'YOU MISSED'
             outcome_p2 = 'YOUR OPPONENT MISSED'
             self.set_grid_space(row, col, 'O')
+        elif 'CQ' in val:
+            print('IM IN')
+            outcome, outcome_p2 = self.CQ_hit(val, row, col)
         elif (col,row) in self.shipinfo.keys():
             self.set_grid_space(row, col, 'X')
             val = self.shipinfo[(col,row)]
             del self.shipinfo[(col,row)]
             outcome, outcome_p2 = self.result_of_hit(val)
-        elif self.grid[col][row] == '?':
+        elif val == '?':
             self.set_grid_space(row, col, 'X')
             val = self.shipinfo[(col,row)]
             del self.shipinfo[(col,row)]
             outcome, outcome_p2 = self.result_of_hit(val)
-        elif self.grid[col][row] == 'O':
+        elif val == 'O':
             outcome = 'THIS COORDINATE WAS ALREADY ATTACKED AND MISSED'
             outcome_p2 = ''
         else:
