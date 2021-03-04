@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import pandas as pd
 import os
 import string
 import unittest
@@ -15,75 +16,44 @@ class TestInput(TestCase):
     def setUp(self):
         '''Set up fixtures for tests.'''
         self.bf = battlefield()
+        self.board_size = (10,10)
+        self.test_bf = self.buildSampleBoard()
 
     def buildSampleBoard(self):
         '''Build sample board. Needed for tests.'''
-        numbers = []
-        for i in range(1,11):
-            numbers.append(str(i))
-        letters = []
-        letters.extend(' ')
-        letters.extend(map(chr, range(ord('A'), ord('J')+1)))
-        game_board = []
-        game_board.append(letters)
-        for number in numbers:
-                row = []
-                row.append(number)
-                row.extend(['-'] * 10)
-                game_board.append(row)
+        game_board = pd.DataFrame('-', index=[str(i) for i in range(1, self.board_size[0]+1)], columns=[chr(i)  for i in range(ord('A'),ord('Z')+1)][:self.board_size[1]])
         return game_board
 
     def test_GridSize(self):
         '''Check size of grid.'''
-        grid = np.array(self.bf.grid)
-        self.assertEqual(grid.shape[0], 10)
-        self.assertEqual(grid.shape[1], 10)
-
-    def test_GameBoardSize(self):
-        '''Check size of game board.'''
-        self.assertEqual(len(self.bf.number_coordinates), 10)
-        self.assertEqual(len(self.bf.letter_coordinates), 11)
+        grid = self.bf.grid
+        self.assertEqual(grid.shape, self.board_size)
 
     def test_GameBoardArrange(self):
         '''Check arrangement of game board.'''
         game_board = self.buildSampleBoard()
-        self.assertEqual(self.bf.game_board, game_board)
+        self.assertTrue((self.bf.grid == game_board).any().any())
 
-    def test_GameBoardManipulation(self):
+    def test_hit(self):
         '''Check manipulation of game board.'''
-        self.bf.modifyBoardAttacks((4, 3), 'MISS')
-        board_miss = [[' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
-                      ['1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['2', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['3', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['5', '-', '-', '-', 'O', '-', '-', '-', '-', '-', '-'],
-                      ['6', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['7', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['8', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['9', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['10', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']]
-        self.assertEqual(self.bf.game_board, board_miss)
+        test_coords = [('3', 'A'), ('4', 'A')]
+        self.bf.place_on_board(test_coords, 'Minesweeper')
+        result = self.bf.attack(test_coords[1])
+        self.assertEqual(result, 'You have hit one of your opponents ships!')
+        self.assertEqual(self.bf.grid[test_coords[1][1]][test_coords[1][0]], 'X')
+
     def test_CorrectShips(self):
         '''Check if ships are placed in correct coordinates.'''
-        ship_test = Battleship(length=2, coordinates=[[0, 0], [1, 0]])
-        self.bf.modifyBoardShips(ship_test)
-        board_ship = [[' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
-                      ['1', '&', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['2', '&', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['3', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['4', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['5', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['6', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['7', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['8', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['9', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-                      ['10', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']]
-        self.assertEqual(self.bf.game_board, board_ship)
+        test_coords = [('5', 'I'), ('5', 'J')]
+        test_ship_name = 'Minesweeper'
+        self.bf.place_on_board(test_coords, test_ship_name)
+        val = self.bf.grid[test_coords[1][1]][test_coords[1][0]]
+        self.assertEqual(val, test_ship_name)
 
     def test_AttackShip(self):
         '''Check that if a ship is hit, it is reported.'''
-        ship_test = Battleship(length=2, coordinates=[[0, 0], [1, 0]])
-        self.bf.modifyBoardShips(ship_test)
-        outcome = self.bf.attack([0, 0])
-        self.assertEqual(outcome, 'MISS')
+        test_coords = [('5', 'H'), ('5', 'I'), ('5', 'J')]
+        test_ship_name = 'Destroyer'
+        self.bf.place_on_board(test_coords, test_ship_name)
+        outcome = self.bf.attack(('10', 'J'))
+        self.assertEqual(outcome, 'YOU MISSED')
