@@ -55,20 +55,18 @@ class game:
     def check_outcome(self, outcome):
         print('\n', outcome, '\n')
         if 'last ship' in outcome:
-            return False
-        else:
-            return True
+            print('GAME OVER')
+            exit()
 
     def play_game(self):
         '''Main game loop'''
-        play = True
-        while play:
-            outcome_p1 = self.player1_move()
-            play = self.check_outcome(outcome_p1)
-            outcome_p2 = self.player2_move()
-            play = self.check_outcome(outcome_p2)
-            self.p2bf.printBoardForOpponent()
-            self.p1bf.printYourBoard()
+        outcome_p1 = self.player1_move()
+        self.check_outcome(outcome_p1)
+        outcome_p2 = self.player2_move()
+        self.check_outcome(outcome_p2)
+        self.p2bf.printBoardForOpponent()
+        self.p1bf.printYourBoard()
+        self.play_game()
 
 
     def AI_SetUpShips(self, ship_obj):
@@ -79,6 +77,9 @@ class game:
         coords, ship_name = self.p2.place_ship(ship_obj)
         if not self.p2bf.place_on_board(coords, ship_name):
             self.AI_SetUpShips(ship_obj)
+        print('AI BOARD')
+        self.p2bf.printYourBoard()
+
 
     def SetUpShips(self, ship_obj):
         '''Sets up ships for player1.
