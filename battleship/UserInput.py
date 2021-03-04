@@ -164,7 +164,7 @@ class AttackInputCoordinate(InputCoordinate):
         super().__init__(input_coord)
 
     @classmethod
-    def get_user_input(cls):
+    def get_user_input(cls, sonar_unlocked):
         '''Get user input for attack coordinates.
         Returns:
             attack_coord.trans_coord: transformed attack coordinates if attack
@@ -172,12 +172,18 @@ class AttackInputCoordinate(InputCoordinate):
             cls.get_user_input(): circles back to getting user input after error
                                   message was displayed
         '''
-        input_coord = input('Provide the coordinate you would like to attack: ')
+        print(sonar_unlocked)
+        activated = False
+        if sonar_unlocked:
+            input_coord = input('Provide the coordinate you would like to attack or enter S to activate sonar: ')
+            if input_coord == 'S':
+                input_coord = input('Provide the coordinate for the sonar attack: ')
+                activated = True
         attack_coord = cls(input_coord)
         attack_coord.check_coord()
 
         if len(attack_coord.trans_coord) == 2:
-            return attack_coord.trans_coord
+            return attack_coord.trans_coord, activated
         else:
             print('Try again with valid attack coordinates')
             return cls.get_user_input()
