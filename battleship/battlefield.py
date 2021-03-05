@@ -96,18 +96,13 @@ class battlefield:
             outcome_p2: string detailing results of hit from player2 attack
         '''
         # search the board for other instances of the ship
-        print('this should be true if there are any instances of the ship left: ')
-        print(ship_name in self.shipinfo.values())
         if ship_name in self.shipinfo.values():
             outcome = 'You have hit one of your opponents ships!'
             outcome_p2 = 'Your opponent has hit your {}'.format(ship_name)
         else:
-            print('this should be 1 if there are no more ships on the board')
-            print(max(np.vectorize(len)(self.grid.values.astype(str)).max(axis=0)))
             # if the max length of your grid values is 1, there are no more ships
             if max(np.vectorize(len)(self.grid.values.astype(str)).max(axis=0)) == 1:
                 # if all rows are empty then you've sunk all the ships
-                print(self.printYourBoard())
                 outcome = 'You have sunk your opponents last ship, YOU WIN!'
                 outcome_p2 = 'Your opponent has sunk your last ship, YOU LOSE'
             else:
@@ -142,14 +137,12 @@ class battlefield:
         return outcome, outcome_p2
 
     def attack(self, attack_coord, p2_attack=False):
-        print(self.shipinfo)
         '''Finds result of attack.
         Args:
             attack_coord: attack coordinate in grid coordinates
         Returns:
             outcome: string detailing results of attack
         '''
-        print(attack_coord)
         row = attack_coord[0]
         col = attack_coord[1]
         val = self.grid[col][row]

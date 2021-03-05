@@ -40,18 +40,27 @@ pip install -r requirements.txt
 ```
 
 ## Code Coverage
+```
+pip install coverage
+
+cd tests
+
+coverage run --source=. -m unittest *
+
+coverage report
+```
 
 <pre>
-Name                      Stmts   Miss  Cover   Missing
--------------------------------------------------------
-LUT_test.py                  14      0   100%
+Name                      Stmts   Miss  Cover
+---------------------------------------------
+LUT_test.py                  15      0   100%
 UserInput_test.py            28      0   100%
-battlefield_test.py          43      0   100%
+battlefield_test.py          49      0   100%
 battleship_game_test.py      76      0   100%
 battleship_test.py           18      0   100%
-player2_test.py              16      0   100%
--------------------------------------------------------
-TOTAL                       195      0   100%
+player2_test.py              17      0   100%
+---------------------------------------------
+TOTAL                       203      0   100%
 </pre>
 
 
