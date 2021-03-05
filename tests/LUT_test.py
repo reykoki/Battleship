@@ -6,9 +6,10 @@ from LUT import LUT
 from LUT import Ship_LUT
 
 import unittest
+from unittest import TestCase
 from player2 import player2
 
-class LUTTestCase(unittest.TestCase):
+class LUTTestCase(TestCase):
     '''Class to test LUT and Ship_LUT class functionality.'''
 
     def test_Attack_LUT_size(self):

@@ -3,10 +3,11 @@ sys.path.append('../src/thequintet')
 sys.path.append('../battleship')
 
 import unittest
+from unittest import TestCase
 from player2 import player2
 
 
-class Player2TestCase(unittest.TestCase):
+class Player2TestCase(TestCase):
     '''Class to test player2 functionality.'''
 
     def setUp(self):

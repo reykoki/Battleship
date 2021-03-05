@@ -16,11 +16,12 @@ class TestInput(TestCase):
     def setUp(self):
         '''Set up fixtures for tests.'''
         self.bf = battlefield()
-        self.board_size = (10,10)
+        self.board_size = (10, 10)
         self.test_bf = self.buildSampleBoard()
 
     def buildSampleBoard(self):
         '''Build sample board. Needed for tests.'''
+
         game_board = pd.DataFrame('-', index=[str(i) for i in range(1, self.board_size[0]+1)], columns=[chr(i)  for i in range(ord('A'),ord('Z')+1)][:self.board_size[1]])
         return game_board
 
@@ -41,6 +42,15 @@ class TestInput(TestCase):
         result = self.bf.attack(test_coords[1])
         self.assertEqual(result, 'You have hit one of your opponents ships!')
         self.assertEqual(self.bf.grid[test_coords[1][1]][test_coords[1][0]], 'X')
+
+    def test_hit_CQ(self):
+        '''Check manipulation of game board.'''
+        test_coords = [('3', 'A'), ('4', 'A')]
+        self.bf.place_on_board(test_coords, 'Minesweeper')
+        result = self.bf.attack(test_coords[0])
+        self.assertTrue('sunk' in result)
+        self.assertEqual(self.bf.grid[test_coords[1][1]][test_coords[1][0]], 'X')
+
 
     def test_CorrectShips(self):
         '''Check if ships are placed in correct coordinates.'''

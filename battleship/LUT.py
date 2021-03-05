@@ -19,17 +19,28 @@ class LUT():
             LUT: look up table with all rows and columns
         '''
         possible_rows = [str(i) for i in range(1, self.row_size+1)]
-        possible_cols = [chr(i) for i in range(ord('A'),ord('Z')+1)][:self.col_size]
+        possible_cols = [chr(i) for i in range(ord('A'), ord('Z')+1)][:self.col_size]
         LUT = list(itertools.product(possible_rows, possible_cols))
         return LUT
 
     @classmethod
-    def get_Attack_LUT(self, row_size = 10, col_size = 10):
+    def get_Attack_LUT(self, row_size=10, col_size=10):
+        '''Create attack look up table.
+        Args:
+            row_size: number of rows (default is 10)
+            col_size: number of columns (default is 10)
+        Returns:
+            attack look up table
+        '''
         attack_LUT = self(row_size, col_size)
         return attack_LUT.create_LUT()
 
 class Ship_LUT(LUT):
-    '''Creates ship LUT.'''
+    '''Creates ship LUT.
+    Attributes:
+        direction: ship direction
+        ship_len: length of ship
+    '''
 
     def __init__(self, direction, ship_len):
         '''Initializes Ship_LUT class.

@@ -7,7 +7,7 @@ from unittest import TestCase
 from UserInput import InputCoordinate
 from UserInput import InitialInputCoordinate
 from UserInput import AttackInputCoordinate
-from Ship import Battleship
+from Ship import *
 
 class TestInput(TestCase):
     '''Test class used to mock inputs and InitialInputCoordinate and
@@ -55,4 +55,3 @@ class TestInput(TestCase):
         '''
         attack_coord = AttackInputCoordinate.get_user_input()
         self.assertEqual(attack_coord[0], ('1', 'A'))
-
