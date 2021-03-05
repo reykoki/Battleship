@@ -7,7 +7,7 @@ from unittest import TestCase
 from UserInput import InputCoordinate
 from UserInput import InitialInputCoordinate
 from UserInput import AttackInputCoordinate
-from Ship import Battleship
+from Ship import *
 
 class TestInput(TestCase):
     '''Test class used to mock inputs and InitialInputCoordinate and
@@ -24,8 +24,8 @@ class TestInput(TestCase):
             'A2': initial starting coordinate
             'v': denoting vertical orientation
         '''
-        InitialInputCoordinate.get_user_input(self.ship)
-        self.assertNotEqual(self.ship.coordinates, [])
+        coords = InitialInputCoordinate.get_user_input(self.ship)
+        self.assertNotEqual(coords, '')
 
     @mock.patch('builtins.input', side_effect=['A1', 'v'])
     def test_all_coords_v(self, mock):
@@ -34,8 +34,8 @@ class TestInput(TestCase):
             'A1': initial starting coordinate
             'v': denoting vertical orientation
         '''
-        InitialInputCoordinate.get_user_input(self.ship)
-        self.assertEqual(self.ship.coordinates, [(0, 0), (1, 0), (2, 0), (3, 0)])
+        coords = InitialInputCoordinate.get_user_input(self.ship)
+        self.assertEqual(coords, [('1', 'A'), ('2', 'A'), ('3', 'A'), ('4','A')])
 
     @mock.patch('builtins.input', side_effect=['A1', 'h'])
     def test_all_coords_h(self, mock):
@@ -44,8 +44,8 @@ class TestInput(TestCase):
             'A1': initial starting coordinate
             'h': denoting horizontal orientation
         '''
-        InitialInputCoordinate.get_user_input(self.ship)
-        self.assertEqual(self.ship.coordinates, [(0, 0), (0, 1), (0, 2), (0, 3)])
+        coords = InitialInputCoordinate.get_user_input(self.ship)
+        self.assertEqual(coords ,[('1', 'A'), ('1', 'B'), ('1', 'C'), ('1','D')])
 
     @mock.patch('builtins.input', side_effect=['A1'])
     def test_attackInputCoordinate(self, mock):
@@ -54,4 +54,4 @@ class TestInput(TestCase):
             'A1': input attack coordinate
         '''
         attack_coord = AttackInputCoordinate.get_user_input()
-        self.assertEqual(attack_coord, (0, 0))
+        self.assertEqual(attack_coord[0], ('1', 'A'))

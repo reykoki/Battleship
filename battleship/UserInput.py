@@ -26,7 +26,8 @@ class InputCoordinate(object):
         Stores transformed coordinates if inside game board
         Prints invalid choice of coordinates message
         '''
-        #TODO: make it so that if you change the board dimensions, this will also be changed
+        # TODO: make it so that if you change the board dimensions,
+        #  this will also be changed
         valid_cols = [chr(i) for i in range(ord('A'),ord('J')+1)]
         valid_rows = [str(i) for i in range(1,11)]
         input_coord = self.input_coord
@@ -51,7 +52,11 @@ class InputCoordinate(object):
 
 class InitialInputCoordinate(InputCoordinate):
     '''Class used to process user input coordinates for ship placement.
-    Child of InputCoordinate.'''
+    Child of InputCoordinate.
+    Attributes:
+        direction: ship direction. 'h' for horizontal and 'v' for vertical
+        ship_length: ship length
+    '''
     def __init__(self, input_coord, direction, ship_length):
         '''Initializes InitialInputCoordinate.
         Args:
@@ -92,7 +97,8 @@ class InitialInputCoordinate(InputCoordinate):
             False: if trans_coord not in LUT
         '''
         if self.trans_coord not in LUT:
-            print("\nInvalid coordinates, the end of the ship is off the board, choose another coordinate.")
+            print("\nInvalid coordinates, the end of the ship is off the board, "
+                  "choose another coordinate.")
             return False
         else:
             return True
@@ -103,6 +109,7 @@ class InitialInputCoordinate(InputCoordinate):
         Args:
             ship_obj: needed to get ship's direction
         Returns:
+            (): if invalid input
             ship_coords: returns ship horizontal or vertical coordinates
         '''
         direction = self.direction.lower()
@@ -142,6 +149,8 @@ class InitialInputCoordinate(InputCoordinate):
         '''Used to get user input such as starting coordinates and direction of ship.
         Args:
             ship_obj: used to get ship length
+        Returns:
+            ship_coords: returns ship coordinates if they were input
         '''
         start_coord = input('\nwhich coordinate would you like to place your {} '
                             '(example A1, D5, or J9)? '.format(ship_obj.getName()))

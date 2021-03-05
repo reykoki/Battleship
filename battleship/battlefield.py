@@ -6,18 +6,20 @@ class battlefield:
     '''Battlefield object. Used to manipulate grid and game board.
     Attributes:
         grid: Keeps track of attacks
-        game_board: Displayed to the players
-        board_size: Default game board size
-        number_coordinates: Game board row labels
-        letter_coordinates: Game board column labels
+        shipnames: list of ships on battlefield
+        shipinfo: dictionary to track important information regarding battleships
+        CQ: dictionary to store captain's quarters coordinates
+        sonar_unlocked: status of sonar
+        sonar_remaining: gives number of sonar uses remaining
     '''
 
     def __init__(self):
-        '''Initializes battlefield object. Creates grid, game_board, sets
-        board size, row and column coordinates and creates game_board to
-        display to the players.
+        '''Initializes battlefield object. Creates grid, initializes empty ship
+        names list, empty ship info dictionary, sonar status and sonar
+        remaining uses left.
         '''
-        self.grid = pd.DataFrame('-', index=[str(i) for i in range(1, 11)], columns=[chr(i) for i in range(ord('A'),ord('J')+1)])
+        self.grid = pd.DataFrame('-', index=[str(i) for i in range(1, 11)],
+                                 columns=[chr(i) for i in range(ord('A'),ord('J')+1)])
         self.shipnames = []
         self.shipinfo = {}
         self.CQ = {}
@@ -25,12 +27,18 @@ class battlefield:
         self.sonar_remaining = 2
 
     def addCaptainsQuarters(self, ship_coords):
+        '''Add string value to grid to represent captain's quarters
+        and store captain's quarters.
+        Args:
+            ship_coords: coordinates of captain's quarters
+        '''
         CQ_row = ship_coords[-2][0]
         CQ_col = ship_coords[-2][1]
         self.grid[CQ_col][CQ_row] = self.grid[CQ_col][CQ_row] + 'CQ' + str(len(ship_coords))
         self.CQ[(CQ_col, CQ_row)] = ship_coords
 
     def printBoardForOpponent(self):
+        '''Print opponent board to the terminal.'''
         print('\n ======= OPPONENTS BOARD ======\n')
         board = self.grid
         board = board.replace(".*CQ.*", "-", regex=True)
@@ -41,7 +49,7 @@ class battlefield:
     def printYourBoard(self):
         '''Prints game board to the terminal.'''
         print('\n ========= YOUR BOARD =========\n')
-        board = self.grid.apply(lambda x: x.str.slice(0,1))
+        board = self.grid.apply(lambda x: x.str.slice(0, 1))
         print(board, '\n')
 
     def set_grid_space(self, row, col, val):
@@ -58,6 +66,7 @@ class battlefield:
         Args:
             ship_coords: list of ship coordinates
             ship_name: ship name for game board
+            print_board: False by default
         Returns:
             True: if the shp was successfully placed on the board
             False: if ship wasn't successfully placed on board
@@ -68,7 +77,7 @@ class battlefield:
             col = coord[1]
             if self.grid[col][row] == '-':
                 self.set_grid_space(row, col, ship_name)
-                self.shipinfo[(col,row)] = ship_name
+                self.shipinfo[(col, row)] = ship_name
                 if ship_name not in self.shipnames:
                     self.shipnames.append(ship_name)
             else:
@@ -87,12 +96,13 @@ class battlefield:
             ship_name: ship name
         Returns:
             outcome: string detailing results of hit
+            outcome_p2: string detailing results of hit from player2 attack
         '''
         # search the board for other instances of the ship
         if ((self.grid==ship_name).any()==True).any():
             # TODO: decide if you should be able to see which ship you hit
             outcome = 'You have hit one of your opponents ships!'
-            outcome_p2 = 'Your opponent has his your {}'.format(ship_name)
+            outcome_p2 = 'Your opponent has hit your {}'.format(ship_name)
         else:
             if max(np.vectorize(len)(self.grid.values.astype(str)).max(axis=0)) == 1:
                 # if all rows are empty then you've sunk all the ships
@@ -104,10 +114,20 @@ class battlefield:
         return outcome, outcome_p2
 
     def CQ_hit(self, val, row, col):
+        '''Outcome when captain's quarters are hit.
+        Args:
+            val: value to set coordinate to
+            row: coordinate row
+            col: coordinate column
+        Returns:
+            outcome: string denoting result of hitting captain's quarters
+            outcome_p2: string denoting result of hitting captain's quarters
+        '''
         if int(val[-1]) > 2:
             self.grid[col][row] = val[:-1] + '1'
             outcome = 'You have damaged a ships captains quarters'
-            outcome_p2 = 'Your opponent has damaged your {} captains quarters'.format(val[:-3])
+            outcome_p2 = 'Your opponent has damaged your {} captains quarters'\
+                         .format(val[:-3])
         else:
             for coord in self.CQ[(col, row)]:
                 row = coord[0]
@@ -117,7 +137,6 @@ class battlefield:
             outcome = 'You hit the captain quarters of your opponents ship. \n' + outcome
             outcome_p2 = 'Your opponent has hit your captains quarters.\n' + outcome_p2
         return outcome, outcome_p2
-
 
     def attack(self, attack_coord, p2_attack=False):
         '''Finds result of attack.
@@ -135,17 +154,17 @@ class battlefield:
             outcome_p2 = 'YOUR OPPONENT MISSED'
             self.set_grid_space(row, col, 'O')
         elif 'CQ' in val:
-            print('IM IN')
+            # print('IM IN')
             outcome, outcome_p2 = self.CQ_hit(val, row, col)
-        elif (col,row) in self.shipinfo.keys():
+        elif (col, row) in self.shipinfo.keys():
             self.set_grid_space(row, col, 'X')
-            val = self.shipinfo[(col,row)]
-            del self.shipinfo[(col,row)]
+            val = self.shipinfo[(col, row)]
+            del self.shipinfo[(col, row)]
             outcome, outcome_p2 = self.result_of_hit(val)
         elif val == '?':
             self.set_grid_space(row, col, 'X')
-            val = self.shipinfo[(col,row)]
-            del self.shipinfo[(col,row)]
+            val = self.shipinfo[(col, row)]
+            del self.shipinfo[(col, row)]
             outcome, outcome_p2 = self.result_of_hit(val)
         elif val == 'O':
             outcome = 'THIS COORDINATE WAS ALREADY ATTACKED AND MISSED'
@@ -161,27 +180,46 @@ class battlefield:
             return outcome
 
     def sonar_activated(self, attack_coord):
+        '''Activates sonar.
+        Args:
+            attack_coord: attack coordinates for center of sonar
+        '''
         self.sonar_remaining = self.sonar_remaining - 1
         row = attack_coord[0]
         col = attack_coord[1]
-        for r in range(-2,3):
-            new_col = chr(ord(col)+r)
-            if self.grid[new_col][row] == '-':
-                self.set_grid_space(row, new_col, '#')
-            elif self.grid[new_col][row] == 'X':
-                self.set_grid_space(row, new_col, 'X')
-            elif self.grid[new_col][row] == 'O':
-                self.set_grid_space(row, new_col, 'O')
-            elif (col,new_col) in self.shipinfo.keys():
-                self.set_grid_space(row, new_col, '?')
-        for c in range(-2,3):
-            new_row = chr(ord(row)+c)
-            if self.grid[col][new_row] == '-' or self.grid[col][new_row] == '#':
-                self.set_grid_space(new_row, col, '#')
-            elif self.grid[col][new_row] == 'X':
-                self.set_grid_space(new_row, col, 'X')
-            elif self.grid[col][new_row] == 'O':
-                self.set_grid_space(new_row, col, 'O')
-            elif (col,new_row) in self.shipinfo.keys():
-                self.set_grid_space(new_row, col, '?')
+        for r in range(-2, 3):
+            new_col = chr(ord(col) + r)
+            if new_col in self.grid:
+                if self.grid[new_col][row] == '-':
+                    self.set_grid_space(row, new_col, '#')
+                elif self.grid[new_col][row] == 'X':
+                    self.set_grid_space(row, new_col, 'X')
+                elif self.grid[new_col][row] == 'O':
+                    self.set_grid_space(row, new_col, 'O')
+                elif (col, new_col) in self.shipinfo.keys():
+                    self.set_grid_space(row, new_col, '?')
+        for c in range(-2, 3):
+            new_row = chr(ord(row) + c)
+            if new_row in self.grid[col]:
+                if self.grid[col][new_row] == '-' or self.grid[col][new_row] == '#':
+                    self.set_grid_space(new_row, col, '#')
+                elif self.grid[col][new_row] == 'X':
+                    self.set_grid_space(new_row, col, 'X')
+                elif self.grid[col][new_row] == 'O':
+                    self.set_grid_space(new_row, col, 'O')
+                elif (col, new_row) in self.shipinfo.keys():
+                    self.set_grid_space(new_row, col, '?')
 
+        for i in [-1, 1]:
+            new_col = chr(ord(col) + i)
+            for j in [-1, 1]:
+                new_row = chr(ord(row) + j)
+                if new_col in self.grid and new_row in self.grid[new_col]:
+                    if self.grid[new_col][new_row] == '-' or self.grid[new_col][new_row] == '#':
+                        self.set_grid_space(new_row, new_col, '#')
+                    elif self.grid[new_col][new_row] == 'X':
+                        self.set_grid_space(new_row, new_col, 'X')
+                    elif self.grid[new_col][new_row] == 'O':
+                        self.set_grid_space(new_row, new_col, 'O')
+                    elif (new_col, new_row) in self.shipinfo.keys():
+                        self.set_grid_space(new_row, new_col, '?')

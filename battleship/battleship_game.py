@@ -33,8 +33,7 @@ class game:
         Calls AttackInputCoordinate to receive player1's desired attack coordinates
         Gives attack coordinates to player2's battlefield for attack results
         Returns:
-            False: if player1 won the game
-            True: if game should continue
+            outcome: string denoting result of attack
         '''
         #self.p2bf.sonar_unlocked = True
         attack_coord, activated = AttackInputCoordinate.get_user_input(self.p2bf.sonar_unlocked)
@@ -54,14 +53,17 @@ class game:
         Randomly chooses player2's attack coordinates
         Gives attack coordinates to player1's battlefield for attack results
         Returns:
-            False: if player2 won the game
-            True: if game should continue
+            outcome: string denoting result of attack
         '''
         attack_coord = self.p2.get_attack_coord()
         outcome = self.p1bf.attack(attack_coord, True)
         return outcome
 
     def check_outcome(self, outcome):
+        '''Prints outcome.
+        Args:
+            outcome: string
+        '''
         print('\n', outcome, '\n')
         if 'last ship' in outcome:
             print('GAME OVER')
@@ -89,8 +91,8 @@ class game:
         coords, ship_name = self.p2.place_ship(ship_obj)
         if not self.p2bf.place_on_board(coords, ship_name):
             self.AI_SetUpShips(ship_obj)
-        print('AI BOARD')
-        self.p2bf.printYourBoard()
+        # print('AI BOARD')
+        # self.p2bf.printYourBoard()
 
 
     def SetUpShips(self, ship_obj):
