@@ -46,7 +46,7 @@ class TestInput(TestCase):
 
     @mock.patch('builtins.input', side_effect=[])
     def test_AIShips(self, mock):
-        '''Test AI Ship Setup Board.'''
+        #Test AI Ship Setup Board.
         bf_game = game()
         ship = Battleship()
         bf_game.AI_SetUpShips(ship)
@@ -67,6 +67,7 @@ class TestInput(TestCase):
         bf_game = game()
         with self.assertRaises(SystemExit) as cm:
             bf_game.check_outcome('testing end of game when last ship has been sunk')
+
 
     @mock.patch('builtins.input', side_effect=['S', 'E5'])
     def test_sonar(self, mock):
@@ -92,6 +93,3 @@ class TestInput(TestCase):
         grid['G']['5'] = '#'
         ne = (bf_game.p2bf.grid != grid).any(1)
         self.assertFalse(ne.all())
-
-# to run:
-# python -m unittest -v test_UserInput.py

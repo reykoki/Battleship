@@ -20,7 +20,7 @@ To Play:
 
 
 ```
-    python main.py
+python main.py
 ```
 
 - testing suite
@@ -28,15 +28,32 @@ To Play:
 
 
 ```
-    python -m unittest -v ./tests/*
+cd tests
+python -m unittest -v *
 ```
 
 - .gitignore to exclude any superfluous files/directories
 - requirements.txt to give the user a list of any necessary packages
 
 ```
-    pip install -r requirements.txt
+pip install -r requirements.txt
 ```
+
+## Code Coverage
+
+<pre>
+Name                      Stmts   Miss  Cover   Missing
+-------------------------------------------------------
+LUT_test.py                  14      0   100%
+UserInput_test.py            28      0   100%
+battlefield_test.py          43      0   100%
+battleship_game_test.py      76      0   100%
+battleship_test.py           18      0   100%
+player2_test.py              16      0   100%
+-------------------------------------------------------
+TOTAL                       195      0   100%
+</pre>
+
 
 
 

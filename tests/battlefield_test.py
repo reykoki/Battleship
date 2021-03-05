@@ -21,9 +21,8 @@ class TestInput(TestCase):
 
     def buildSampleBoard(self):
         '''Build sample board. Needed for tests.'''
-        game_board = pd.DataFrame('-', index=[str(i) for i in range(1, self.board_size[0]+1)],
-                                  columns=[chr(i)  for i in range(ord('A'),
-                                  ord('Z')+1)][:self.board_size[1]])
+
+        game_board = pd.DataFrame('-', index=[str(i) for i in range(1, self.board_size[0]+1)], columns=[chr(i)  for i in range(ord('A'),ord('Z')+1)][:self.board_size[1]])
         return game_board
 
     def test_GridSize(self):
