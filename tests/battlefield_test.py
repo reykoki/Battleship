@@ -41,7 +41,7 @@ class TestInput(TestCase):
         test_coords = [('3', 'A'), ('4', 'A')]
         self.bf.place_on_board(test_coords, 'Minesweeper')
         result = self.bf.attack(test_coords[1])
-        self.assertEqual(result, 'You have hit one of your opponents ships!')
+        self.assertEqual(result, 'You have sunk your opponents Minesweeper')
         self.assertEqual(self.bf.grid[test_coords[1][1]][test_coords[1][0]], 'X')
 
     def test_CorrectShips(self):
