@@ -14,7 +14,7 @@ class game:
         p2: player2 class for AI bot
     '''
 
-    def __init__(self, ships = ['Minesweeper', 'Destroyer', 'Battleship']):
+    def __init__(self, ships=['Minesweeper', 'Destroyer', 'Battleship', 'Destroyer']):
         '''Initializes game class.
         Initialized list of ships to start game. Each player gets one Minesweeper,
         one Destroyer and one Battleship
@@ -93,7 +93,6 @@ class game:
         print('AI BOARD')
         self.p2bf.printYourBoard()
 
-
     def SetUpShips(self, ship_obj):
         '''Sets up ships for player1.
         Takes in player1 input for where should be placed
@@ -101,6 +100,7 @@ class game:
             ship_obj: used to place ship on player1's game board
         '''
         ship_coords = InitialInputCoordinate.get_user_input(ship_obj)
+        print('Ship coords: ', ship_coords)
         if not self.p1bf.place_on_board(ship_coords, ship_obj.getName(), True):
             print('\nthe space you chose to put your {} is already occupied, '
                   'choose another'.format(ship_obj.getName()))

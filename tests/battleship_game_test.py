@@ -40,9 +40,9 @@ class TestInput(TestCase):
         grid['A']['1'] = 'O'
         grid['D']['5'] = 'O'
         grid['J']['9'] = 'O'
-        self.assertEqual(bf_game.p2bf.grid['A']['1'],grid['A']['1'])
-        self.assertEqual(bf_game.p2bf.grid['D']['5'],grid['D']['5'])
-        self.assertEqual(bf_game.p2bf.grid['J']['9'],grid['J']['9'])
+        self.assertEqual(bf_game.p2bf.grid['A']['1'], grid['A']['1'])
+        self.assertEqual(bf_game.p2bf.grid['D']['5'], grid['D']['5'])
+        self.assertEqual(bf_game.p2bf.grid['J']['9'], grid['J']['9'])
 
     @mock.patch('builtins.input', side_effect=[])
     def test_AIShips(self, mock):

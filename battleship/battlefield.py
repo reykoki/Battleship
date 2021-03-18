@@ -149,7 +149,7 @@ class battlefield:
         Returns:
             outcome: string detailing results of attack
         '''
-        print(attack_coord)
+        print('Length of attack coord: ', attack_coord)
         row = attack_coord[0]
         col = attack_coord[1]
         val = self.grid[col][row]
@@ -180,7 +180,6 @@ class battlefield:
             if "You have sunk" in outcome:
                 self.sonar_unlocked = True
             return outcome
-
 
     def replace_val(self, row, col, val):
         if val == '-':

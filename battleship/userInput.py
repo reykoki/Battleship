@@ -1,5 +1,5 @@
 import numpy as np
-
+from attack import *
 
 class InputCoordinate(object):
     '''Class to manipulate input coordinates.
@@ -28,8 +28,8 @@ class InputCoordinate(object):
         '''
         # TODO: make it so that if you change the board dimensions,
         #  this will also be changed
-        valid_cols = [chr(i) for i in range(ord('A'),ord('J')+1)]
-        valid_rows = [str(i) for i in range(1,11)]
+        valid_cols = [chr(i) for i in range(ord('A'), ord('J')+1)]
+        valid_rows = [str(i) for i in range(1, 11)]
         input_coord = self.input_coord
         good_coords = True
         # convert letter to number with index 0
@@ -48,7 +48,6 @@ class InputCoordinate(object):
         if good_coords:
             # transformed return with index 0
             self.trans_coord = (row, col)
-
 
 class InitialInputCoordinate(InputCoordinate):
     '''Class used to process user input coordinates for ship placement.
@@ -152,18 +151,25 @@ class InitialInputCoordinate(InputCoordinate):
         Returns:
             ship_coords: returns ship coordinates if they were input
         '''
-        start_coord = input('\nwhich coordinate would you like to place your {} '
-                            '(example A1, D5, or J9)? '.format(ship_obj.getName()))
+        ship_name = ship_obj.getName()
+        submerged = False
+        print('ship name', ship_name[0])
+        if ship_name[0] == 'S':
+            start_coord = input('\nwhich coordinate would you like to place your {} '
+                                '(example A1, D5, or J9)? '.format(ship_obj.getName()))
+            submerged = input('\nwould you like to submerge your submarine?')
+        else:
+            start_coord = input('\nwhich coordinate would you like to place your {} '
+                                '(example A1, D5, or J9)? '.format(ship_obj.getName()))
         direction = input('\nwould you like to place your ship vertically (down)'
                           ' or horizontally (to the right) of your initial coordinate?'
                           ' [v/h] ')
         input_coordinates = cls(start_coord, direction, ship_obj.getLength())
         ship_coords = input_coordinates.check_input(ship_obj)
         if len(ship_coords) > 0: # check length of ship coordinates
-            return ship_coords
+            return ship_coords, submerged
         else:
             return cls.get_user_input(ship_obj)
-
 
 class AttackInputCoordinate(InputCoordinate):
     '''Class used to process attack input coordinates.
@@ -177,7 +183,7 @@ class AttackInputCoordinate(InputCoordinate):
         super().__init__(input_coord)
 
     @classmethod
-    def get_user_input(cls, sonar_unlocked = False):
+    def getUserInput(cls):
         '''Get user input for attack coordinates.
         Returns:
             attack_coord.trans_coord: transformed attack coordinates if attack
@@ -185,21 +191,4 @@ class AttackInputCoordinate(InputCoordinate):
             cls.get_user_input(): circles back to getting user input after error
                                   message was displayed
         '''
-        activated = False
-        input_coord = input('Provide the coordinate you would like to attack or enter S to activate sonar: ')
-        if input_coord == 'S' or input_coord == 's':
-            if not sonar_unlocked:
-                print('You must sink a ship before unlocking sonar. \n')
-                return cls.get_user_input()
-            else:
-                input_coord = input('Provide the coordinate for the sonar attack: ')
-                activated = True
 
-        attack_coord = cls(input_coord)
-        attack_coord.check_coord()
-
-        if len(attack_coord.trans_coord) == 2:
-            return attack_coord.trans_coord, activated
-        else:
-            print('\nTry again with valid attack coordinates')
-            return cls.get_user_input()

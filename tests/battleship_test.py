@@ -28,3 +28,11 @@ class TestInput(TestCase):
         bs = Battleship()
         self.assertEqual(bs.getName(), 'Battleship')
         self.assertEqual(bs.getLength(), 4)
+
+    def test_Submarine(self):
+        '''Test to ensure Submarine class returns correct information
+        for Submarine type.'''
+        sm = Submarine()
+        self.assertEqual(sm.getName(), 'Submarine')
+        self.assertEqual(sm.getLength(), 4)
+        # self.assertEqual(sm.isSubmerged(), False)
