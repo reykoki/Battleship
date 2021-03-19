@@ -200,7 +200,7 @@ class grid:
         Returns:
             outcome: string detailing results of attack
         '''
-        if attack.getName() == 'c':
+        if attack.getName() == 'c' or attack.getName() == 'l':
             attack_coord = attack.getCoords()
             if len(attack_coord) == 2:
                 print('attack coord', attack_coord)

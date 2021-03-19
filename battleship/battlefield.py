@@ -23,6 +23,18 @@ class battlefield:
         self.CQ = {}
         self.sonar_unlocked = False
         self.sonar_remaining = 2
+        self.prev_grids = []
+
+    def undo_grid(self):
+        try:
+            self.grid = self.prev_grids.pop()
+        except:
+            print('cannot undo board: board is already at oldest known configuration')
+
+    def move_ships(self):
+        self.prev_grids.append(self.grid)
+
+
 
     def addCaptainsQuarters(self, ship_coords):
         '''Add string value to grid to represent captain's quarters
