@@ -116,12 +116,6 @@ class notAIBot(player):
         '''
         self.attack_LUT = [x for x in self.attack_LUT if x != attack]
 
-    def processResult(self, result):
-        print(result)
-        if 'last' in result:
-            print('GAME OVER: you lose!')
-            exit()
-
     def get_attack(self):
         '''Gets random attack coordinate from attack LUT.
         Calls remove_attack_coord to verify attack coordinate hasn't already
@@ -134,10 +128,6 @@ class notAIBot(player):
         a = attack()
         at = a.createAttack('c', attack_coord)
         return at
-
-    # def setUpBoard(self):
-    #     for s in self.ships:
-    #         self.setUpShip(s)
 
     def setUpShip(self, ship_obj):
         coords = self.place_ship(ship_obj)

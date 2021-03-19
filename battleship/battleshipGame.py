@@ -27,16 +27,19 @@ class Game:
         '''Main game loop'''
 
         p1_attack = self.p1.getAttack()
-        outcome_p1 = self.p2.board.attack(p1_attack)
-        if outcome_p1 is not None:  # sonar
+        if attack.getName() == 'l' or attack.getName() == 'c':
+            outcome_p1 = self.p2.board.coordinate_attack(p1_attack.getCoords)
             self.p1.processResult(outcome_p1)
+        if attack.getName() == 's':
+            self.p2.board.sonar_attack(p1_attack.getCoords)
+        if attack.getName() == 'm':
+            self.p1.board.move_ships(p1_attack.direction)
+
 
         p2_attack = self.p2.get_attack()
-        outcome_p2 = self.p1.board.attack(p2_attack, True)
+        outcome_p2 = self.p1.board.coordinate_attack(p2_attack.getCoords, True)
         self.p2.processResult(outcome_p2)
         self.p1.board.printBoard()
         self.p2.board.printBoardForOpponent()
-
-
         self.play_game()
 
