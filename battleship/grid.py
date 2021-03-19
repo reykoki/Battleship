@@ -12,21 +12,61 @@ class grid:
         names list, empty ship info dictionary, sonar status and sonar
         remaining uses left.
         '''
-        self.grid = pd.DataFrame('-', index=[str(i) for i in range(1, 11)],
-                                 columns=[chr(i) for i in range(ord('A'), ord('J') + 1)])
+        self.grid = self.create_grid()
+        self.display = self.create_grid()
         self.shipinfo = {}
-        self.CQ = {}
+        self.shipinfo_history = []
+        self.grid_history = []
 
-    def addCaptainsQuarters(self, ship_obj, ship_coords):
-        '''Add string value to grid to represent captain's quarters
-        and store captain's quarters.
-        Args:
-            ship_coords: coordinates of captain's quarters
-        '''
-        CQ_row = ship_coords[-2][0]
-        CQ_col = ship_coords[-2][1]
-        self.grid[CQ_col][CQ_row] = self.grid[CQ_col][CQ_row] + 'CQ' + str(len(ship_coords))
-        self.CQ[(CQ_col, CQ_row)] = ship_coords
+    def create_grid(self):
+        return pd.DataFrame('-', index=[str(i) for i in range(1, 11)],
+                             columns=[chr(i) for i in range(ord('A'), ord('J') + 1)])
+
+    def undo_grid(self):
+        try:
+            self.grid = self.grid_history.pop()
+            self.shipinfo = self.shipinfo_history.pop()
+        except:
+            print('cannot undo board: board is already at oldest known configuration')
+
+    def get_rc_for_move(self, direction):
+        row_diff = 0
+        col_diff = 0
+        if direction == 'N':
+            row_diff = 1
+        elif direction == 'S':
+            row_diff = -1
+        elif direction == 'W':
+            col_diff = -1
+        elif direction == 'E':
+            col_diff = 1
+        return row_diff, col_diff
+
+    def clear_grid(self):
+        self.grid_history.append(self.grid)
+        self.shipinfo_history.append(self.shipinfo)
+        self.grid = self.create_grid()
+        self.shipinfo = {}
+
+    # format ('1', 'A')
+    def on_grid(self, row, col):
+        return row in self.grid.index and col in self.grid.columns
+
+    def move_ships(self, direction):
+        self.clear_grid()
+        rd, cd = self.get_rc_for_move(direction)
+        for shipname, ship_coords in self.shipinfo_history[-1].items():
+            new_coords = []
+            for coord in ship_coords:
+                row = str(int(coord[0]) + rd)
+                col = chr(ord(coord[1]) + cd)
+                # check that new coords are on board and unoccupied
+                if not self.on_grid(row, col) or not self.getGridSpace(row, col)=='-':
+                    new_coords = ship_coords
+                    break
+                new_coords.append((row, col))
+            placeOnBoard(ship_coords, shipname, False)
+
 
     def checkCoord(self, input_coord):
         '''Verifies coordinates are inside the game board.
@@ -37,47 +77,42 @@ class grid:
             trans_coord: transformed coordinates if valid coordinate
             False: if invalid coordinate
         '''
-        valid_cols = [chr(i) for i in range(ord('A'), ord('J') + 1)]
-        valid_rows = [str(i) for i in range(1, 11)]
         trans_coord = ()
-        good_coords = True
         # convert letter to number with index 0
         try:
             col = input_coord[0].upper()
             row = input_coord[1:]
         except:
-            return
+            return ()
 
-        if col not in valid_cols:
+        if col not in self.grid.columns:
             print('\nInvalid column choice: choose a letter A-J')
-            good_coords = False
-        if row not in valid_rows:
+        elif row not in self.grid.index:
             print('\nInvalid row choice: choose a number 1-10')
-            good_coords = False
-        if good_coords:
+        else:
             # transformed return with index 0
             trans_coord = (row, col)
             print('trans coord', trans_coord)
             return trans_coord
-        return good_coords
+        return ()
 
     def printBoard(self):
         '''Prints game board to the terminal.'''
         print('\n ========= YOUR BOARD =========\n')
         board = self.grid.apply(lambda x: x.str.slice(0, 1))
         print(board, '\n')
+        print(self.shipinfo)
 
     def printBoardForOpponent(self):
         '''Print opponent board to the terminal.'''
         print('\n ======= OPPONENTS BOARD ======\n')
-        board = self.grid
+        board = self.display
         board = board.replace("\\?.*", "?", regex=True)
-        board = board.replace(".*CQ.*", "-", regex=True)
-        for shipname in set(self.shipinfo.values()):
+        for shipname in self.shipinfo.keys():
             board = board.replace(shipname, '-')
         print(board, '\n')
 
-    def setGridSpace(self, row, col, val):
+    def setGridSpace(self, row, col, val, update_display = True):
         '''Set grid space value.
         Args:
             row: row value
@@ -85,6 +120,11 @@ class grid:
             val: value for (row,col) coordinate
         '''
         self.grid[col][row] = val
+        if update_display:
+            self.setDisplay(row, col, val)
+
+    def setDisplay(self, row, col, val):
+        self.display[col][row] = val
 
     def getGridSpace(self, row, col):
         '''Get grid space value.
@@ -94,7 +134,7 @@ class grid:
         '''
         return self.grid[col][row]
 
-    def placeOnBoard(self, ship_coords, ship_obj, print_board=False):
+    def placeOnBoard(self, ship_coords, shipname, print_board=False):
         '''Places ship on board given ship coordinates.
         Args:
             ship_coords: list of ship coordinates
@@ -106,22 +146,16 @@ class grid:
             False: if ship wasn't successfully placed on board
                    due to space already being occupied
         '''
-        count = 0
+
         for coord in ship_coords:
             row = coord[0]
             col = coord[1]
             if self.grid[col][row] == '-':
-                count += 1
+                self.setGridSpace(row, col, shipname, False)
             else:
                 return False
-        if count == ship_obj.getLength():
-            for coord in ship_coords:
-                print('Coord: ', coord)
-                row = coord[0]
-                col = coord[1]
-                self.setGridSpace(row, col, ship_obj.getName())
-                self.shipinfo[(row, col)] = ship_obj.getName()
-        self.addCaptainsQuarters(ship_obj, ship_coords)
+
+        self.shipinfo[shipname] = ship_coords
         if print_board:
             self.printBoard()
         return True
@@ -139,8 +173,8 @@ class grid:
         '''
         # search the board for other instances of the ship
         print('this should be true if there are any instances of the ship left: ')
-        print(ship_name in self.shipinfo.values())
-        if ship_name in self.shipinfo.values():
+        print(ship_name in self.shipinfo.keys())
+        if ship_name in self.shipinfo.keys():
             outcome = 'You have hit one of your opponents ships!'
             outcome_p2 = 'Your opponent has hit your {}'.format(ship_name)
         else:
@@ -155,32 +189,6 @@ class grid:
             else:
                 outcome = 'You have sunk your opponents {}'.format(ship_name)
                 outcome_p2 = 'Your opponent has sunk your {}'.format(ship_name)
-        return outcome, outcome_p2
-
-    def CQ_hit(self, val, row, col):
-        '''Outcome when captain's quarters are hit.
-        Args:
-            val: value to set coordinate to
-            row: coordinate row
-            col: coordinate column
-        Returns:
-            outcome: string denoting result of hitting captain's quarters
-            outcome_p2: string denoting result of hitting captain's quarters
-        '''
-        if int(val[-1]) > 2:
-            self.grid[col][row] = val[:-1] + '1'
-            outcome = 'You have damaged a ships captains quarters'
-            outcome_p2 = 'Your opponent has damaged your {} captains quarters'\
-                         .format(val[:-3])
-        else:
-            for coord in self.CQ[(col, row)]:
-                row = coord[0]
-                col = coord[1]
-                self.setGridSpace(row, col, 'X')
-                self.shipinfo.pop((row, col), None)
-            outcome, outcome_p2 = self.result_of_hit(val[:-3])
-            outcome = 'You hit the captain quarters of your opponents ship. \n' + outcome
-            outcome_p2 = 'Your opponent has hit your captains quarters.\n' + outcome_p2
         return outcome, outcome_p2
 
     def replace_val(self, row, col, val):
@@ -213,25 +221,18 @@ class grid:
                     outcome = 'YOU MISSED'
                     outcome_p2 = 'YOUR OPPONENT MISSED'
                     self.setGridSpace(row, col, 'O')
-                elif 'CQ' in val:
-                    outcome, outcome_p2 = self.CQ_hit(val, row, col)
-                elif (row, col) in self.shipinfo.keys():
-                    self.setGridSpace(row, col, 'X')
-                    val = self.shipinfo[attack_coord]
-                    self.shipinfo.pop((row, col))
-                    outcome, outcome_p2 = self.result_of_hit(val)
-                elif val == 'O':
-                    outcome = 'THIS COORDINATE WAS ALREADY ATTACKED AND MISSED'
-                    outcome_p2 = ''
                 else:
-                    outcome = 'YOU HAVE ALREADY ATTACKED AND HIT A SHIP AT THIS COORDINATE'
-                    outcome_p2 = ''
+                    for key, value in self.shipinfo.items():
+                        if (row, col) in value:
+                            self.shipinfo[key].remove((row,col))
+                            break
+                    self.setGridSpace(row, col, 'X')
+                    outcome, outcome_p2 = self.result_of_hit(val)
                 if p2_attack:
                     return outcome_p2
                 else:
-                    if "You have sunk" in outcome:
-                        self.sonar_unlocked = True
                     return outcome
+
         elif attack.getName() == 's':
             attack_coord = attack.getCoords()
             print('sonar attack coord', attack_coord)

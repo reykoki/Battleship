@@ -21,7 +21,6 @@ class player:
 
     def processResult(self, result):
         print(result)
-        self.board.printBoard()
         if 'sunk' in result and 'c' in self.validAttack:
             self.validAttack.pop('c')
             self.validAttack.update({'s': 'sonar attack'})
@@ -43,7 +42,7 @@ class player:
         '''
         ship_coords = self.getUserShipInput(ship_obj)
         print('Ship coords: ', ship_coords)
-        if not self.board.placeOnBoard(ship_coords, ship_obj, True):
+        if not self.board.placeOnBoard(ship_coords, ship_obj.getName(), True):
             print('\nthe space you chose to put your {} is already occupied, '
                   'choose another'.format(ship_obj.getName()))
             self.setUpShip(ship_obj)
@@ -77,7 +76,7 @@ class player:
             return at
         else:
             print('\nTry again with valid attack coordinates')
-            return self.getAttackCoordinate()
+            return self.getAttackCoordinate(attack_type)
 
     def getAttack(self):
         '''Get attack coordinates from user'''
@@ -88,7 +87,7 @@ class player:
             attack_type = input('\nProvide which type of attack you''d like to use: ').lower()
             if attack_type not in self.validAttack:
                 print('Invalid input, try again')
-                self.getAttackOption()
+                self.getAttack()
             attack= self.getAttackCoordinate(self.validAttack[attack_type])
 
             if attack_type == 's':
@@ -122,7 +121,6 @@ class notAIBot(player):
         if 'last' in result:
             print('GAME OVER: you lose!')
             exit()
-        self.board.printBoardForOpponent()
 
     def get_attack(self):
         '''Gets random attack coordinate from attack LUT.
@@ -143,7 +141,7 @@ class notAIBot(player):
 
     def setUpShip(self, ship_obj):
         coords = self.place_ship(ship_obj)
-        if not self.board.placeOnBoard(coords, ship_obj, True):
+        if not self.board.placeOnBoard(coords, ship_obj.getName(), True):
             print('\nthe space you chose to put your {} is already occupied, '
                   'choose another'.format(ship_obj.getName()))
             self.setUpShip(ship_obj)

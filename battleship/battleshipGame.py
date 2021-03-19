@@ -34,6 +34,9 @@ class Game:
         p2_attack = self.p2.get_attack()
         outcome_p2 = self.p1.board.attack(p2_attack, True)
         self.p2.processResult(outcome_p2)
+        self.p1.board.printBoard()
+        self.p2.board.printBoardForOpponent()
+
 
         self.play_game()
 
