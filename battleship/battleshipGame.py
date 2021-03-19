@@ -23,38 +23,17 @@ class Game:
             self.p1.setUpShip(s)
             self.p2.setUpShip(s)
 
-    @staticmethod
-    def check_outcome(outcome):
-        '''Prints outcome.
-        Args:
-            outcome: string
-        '''
-        print('\n', outcome, '\n')
-        if 'last ship' in outcome:
-            print('GAME OVER')
-            exit()
-        else:
-            print(outcome)
-
-    def processP1Input(self, p1_attack):
-        '''Process player1's returned values'''
-        outcome = self.p2.board.attack(p1_attack)
-        if "You have sunk" in outcome:
-            self.p1.sonarUnlocked = True
-        return outcome
-
     def play_game(self):
         '''Main game loop'''
-        play = True
-        while play:
-            p1_attack = self.p1.getAttack()
-            outcome_p1 = self.processP1Input(p1_attack)
-            print('outcome p1', outcome_p1)
-            if outcome_p1 is not None:  # sonar
-                self.check_outcome(outcome_p1)
-            p2_attack = self.p2.get_attack()
-            outcome_p2 = self.p1.board.attack(p2_attack, True)
-            self.check_outcome(outcome_p2)
-            self.p1.board.printBoardForOpponent()
-            self.p1.board.printBoard()
-            self.play_game()
+
+        p1_attack = self.p1.getAttack()
+        outcome_p1 = self.p2.board.attack(p1_attack)
+        if outcome_p1 is not None:  # sonar
+            self.p1.processResult(outcome_p1)
+
+        p2_attack = self.p2.get_attack()
+        outcome_p2 = self.p1.board.attack(p2_attack, True)
+        self.p2.processResult(outcome_p2)
+
+        self.play_game()
+

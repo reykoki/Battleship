@@ -9,10 +9,8 @@ class player:
     def __init__(self, ships):
         self.ships = self.addShips(ships)
         self.board = grid()
-        self.sonarUnlocked = False
-        self.laserUnlocked = False
         self.sonarRemaining = 2
-        self.numShipsSunk = 0
+        self.validAttack = {'c': 'coordinate attack'}
 
     @staticmethod
     def addShips(ships):
@@ -20,6 +18,18 @@ class player:
         for s in ships:
             fleet.append(s)
         return fleet
+
+    def processResult(self, result):
+        print(result)
+        self.board.printBoard()
+        if 'sunk' in result and 'c' in self.validAttack:
+            self.validAttack.pop('c')
+            self.validAttack.update({'s': 'sonar attack'})
+            self.validAttack.update({'l': 'laser attack'})
+            print('you have activated your space laser! This will replace your bomb attacks and allow you to reach submerged submarines')
+        if 'last' in result:
+            print('GAME OVER: you won!')
+            exit()
 
     def setUpBoard(self):
         for s in self.ships:
@@ -58,59 +68,39 @@ class player:
         else:
             return self.getUserShipInput(ship_obj)
 
+    def getAttackCoordinate(self, attack_type):
+        input_coord = input('Provide the coordinate for your {} attack: '.format(attack_type))
+        coord = self.board.checkCoord(input_coord)
+        if len(coord) == 2:
+            a = attack()
+            at = a.createAttack(attack_type[0], coord)
+            return at
+        else:
+            print('\nTry again with valid attack coordinates')
+            return self.getAttackCoordinate()
+
     def getAttack(self):
         '''Get attack coordinates from user'''
-        at = self.getUserAttackInput()
-        print('attack coord', at.getCoords())
-        return at
+        if len(self.validAttack) > 1:
+            print('Attack Options:')
+            for key, value in self.validAttack.items():
+                print('enter', key, 'for ', value)
+            attack_type = input('\nProvide which type of attack you''d like to use: ').lower()
+            if attack_type not in self.validAttack:
+                print('Invalid input, try again')
+                self.getAttackOption()
+            attack= self.getAttackCoordinate(self.validAttack[attack_type])
 
-    def getUserAttackInput(self):
-        '''Handles user input'''
-        attack_type = input('Provide which type of attack you''d like to use ('
-                            'enter ''c'' for coordinate attack, '
-                            'enter ''s'' for sonar or enter ''l'' for the space laser): ')
-        if attack_type == 'c':
-            attack_input = input('Provide the coordinate for the attack: ')
-            coord = self.board.checkCoord(attack_input)
-            if len(coord) == 2:
-                a = attack()
-                at = a.createAttack('c', coord)
-            else:
-                print('\nTry again with valid attack coordinates')
-                return self.getUserAttackInput()
-            return at
-        elif attack_type == 's' or attack_type == 'S':
-            if self.sonarUnlocked:
-                sonar_attack = input('Provide the coordinate for the sonar attack: ')
-                coord = self.board.checkCoord(sonar_attack)
-                if len(coord) == 2:
-                    a = attack()
-                    at = a.createAttack('s', coord)
+            if attack_type == 's':
+                if self.sonarRemaining > 1:
                     self.sonarRemaining -= 1
-                    return at
                 else:
-                    print('\nTry again with valid attack coordinates')
-                    return self.getUserAttackInput()
-            else:
-                print('You must sink a ship before unlocking sonar. \n')
-                return self.getUserAttackInput()
-        elif attack_type == 'l' or attack_type == 'L':
-            if self.numShipsSunk > 0:
-                laser_attack = input('Provide the coordinate for the laser attack: ')
-                coord = self.board.checkCoord(laser_attack)
-                if len(coord) == 2:
-                    a = attack()
-                    at = a.createAttack('l', coord)
-                    return at
-                else:
-                    print('\nTry again with valid attack coordinates')
-                    return self.getUserAttackInput()
-            else:
-                print('You must sink a ship before unlocking sonar. \n')
-                return self.getUserAttackInput()
+                    self.validAttack.pop(attack_type)
         else:
-            print('Please enter valid option.')
-            self.getUserAttackInput()
+            attack_type = str(next(iter(self.validAttack)))
+            attack = self.getAttackCoordinate(self.validAttack[attack_type])
+
+        return attack
 
 class notAIBot(player):
     def __init__(self, ships):
@@ -126,6 +116,13 @@ class notAIBot(player):
             attack: attack coordinate
         '''
         self.attack_LUT = [x for x in self.attack_LUT if x != attack]
+
+    def processResult(self, result):
+        print(result)
+        if 'last' in result:
+            print('GAME OVER: you lose!')
+            exit()
+        self.board.printBoardForOpponent()
 
     def get_attack(self):
         '''Gets random attack coordinate from attack LUT.
