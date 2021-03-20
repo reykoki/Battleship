@@ -13,7 +13,7 @@ class Ship:
         LUT_h: horizontal look up table
     '''
 
-    def __init__(self, name, length):
+    def __init__(self, name, length, CQ_idx):
         '''Initialized Battlefield class.
         Sets ship name, length, coordinates and gets ship's horizontal
         and vertical LUTs
@@ -26,8 +26,13 @@ class Ship:
         self._LUT_v = Ship_LUT.get_Ship_LUT('v', self._length)
         self._LUT_h = Ship_LUT.get_Ship_LUT('h', self._length)
         self._direction = None
-        self._last_coord = None
-        self.cq_coord = None
+        self.CQ = self.setCQ(CQ_idx)
+
+    def setCQ(self, CQ_idx):
+        CQ = [CQ_idx, CQ_idx]
+        if self._length == 2:
+            CQ.pop()
+        return CQ
 
     def getName(self):
         '''Returns ship name.'''
@@ -50,14 +55,14 @@ class Ship:
         '''Returns ship's horizontal LUT.'''
         return self._LUT_h
 
-    def setCQCoord(self):
-        '''Sets the captain's quarters based on last coordinate'''
-        if self._direction == 'h':
-            self.cq_coord = (self._last_coord[0], chr(ord(self._last_coord[1] - 1)))
-            print('{} h cq coor {}', self._name, self.cq_coord)
-        elif self._direction == 'v':
-            self.cq_coord = (str(int(self._last_coord[0] - 1)), self._last_coord[1])
-            print('{} v cq coor {}', self._name, self.cq_coord)
+    def checkCQ(self, idx):
+        sink_ship = False
+        if idx == self.CQ[0]:
+            if len(self.CQ) == 1:
+                sink_ship = True
+            else:
+                self.CQ.pop()
+        return sink_ship
 
     def checkDir(self, trans_coord, direction):
         '''Verifies coordinates are in LUT.
@@ -119,39 +124,29 @@ class Ship:
         else:
             return True
 
-class Minesweeper(Ship):
+class minesweeper(Ship):
     '''Creates Minesweeper class.
     Default length = 2.
     '''
     def __init__(self):
-        super().__init__(name='Minesweeper', length=2)
+        super().__init__(name='MINESWEEPER', length=2, CQ_idx=1)
 
-class Destroyer(Ship):
+class destroyer(Ship):
     '''Creates Destroyer class.
     Default length = 3.
     '''
     def __init__(self):
-        super().__init__(name='Destroyer', length=3)
+        super().__init__(name='DESTROYER', length=3, CQ_idx=2)
 
-class Battleship(Ship):
+class battleship(Ship):
     '''Creates Battleship class.
     Default length = 4.
     '''
     def __init__(self):
-        super().__init__(name='Battleship', length=4)
+        super().__init__(name='BATTLESHIP', length=4, CQ_idx=3)
 
-class Submarine(Ship):
+class submarine(Ship):
     '''Creates Submarine class.
     '''
     def __init__(self):
-        super().__init__(name='Submarine', length=4)
-        # self.submerged = submerged
-
-    # def isSubmerged(self):
-    #     '''Returns submarine submerged status.
-    #
-    #     Returns:
-    #         True: if submerged
-    #         False: if not submerged
-    #     '''
-    #     return self.submerged
+        super().__init__(name='submarine', length=4, CQ_idx=4)

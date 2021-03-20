@@ -14,6 +14,9 @@ class attack:
         elif name == 'l':
             lA = spaceLaserAttack(name, coords)
             return lA
+        elif name == 'm':
+            mF = moveFleet(name, coords)
+            return mF
 
 
 class coordAttack(attack):
@@ -58,3 +61,15 @@ class spaceLaserAttack(attack):
 
     def getCoords(self):
         return self.coords
+
+
+class moveFleet(attack):
+    def __init__(self, name, direction):
+        self.name = name
+        self.direction = direction
+
+    def getName(self):
+        return self.name
+
+    def getDirection(self):
+        return self.direction
