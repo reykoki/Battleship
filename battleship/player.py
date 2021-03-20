@@ -2,7 +2,7 @@ import random
 from LUT import LUT
 from grid import grid
 from attack import *
-from UserInput import *
+from userInput import *
 from Ship import *
 
 class player:

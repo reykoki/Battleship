@@ -32,20 +32,23 @@ class grid:
 
     def redo_move(self):
         try:
-            self.shipinfo = self.shipinfo_redo.pop()
-            self.clear_grid()
+            print("redo ",self.shipinfo_redo)
+            self.shipinfo = self.shipinfo_redo.pop(0)
             for shipname, ship_coords in self.shipinfo.items():
                 self.placeOnBoard(ship_coords, shipname)
+            self.clear_grid()
         except:
             print('cannot redo board')
 
     def undo_move(self):
-        self.shipinfo_redo.append(self.shipinfo)
+        print('in undo')
+        print(self.shipinfo)
         try:
-            self.shipinfo = self.shipinfo_history.pop()
-            self.clear_grid()
+            self.shipinfo = self.shipinfo_history.pop(0)
+
             for shipname, ship_coords in self.shipinfo.items():
                 self.placeOnBoard(ship_coords, shipname)
+            self.clear_grid()
         except:
             self.shipinfo_redo.pop()
             print('cannot undo board: board is already at oldest known configuration')
@@ -54,9 +57,9 @@ class grid:
         row_diff = 0
         col_diff = 0
         if direction == 'N':
-            row_diff = 1
-        elif direction == 'S':
             row_diff = -1
+        elif direction == 'S':
+            row_diff = 1
         elif direction == 'W':
             col_diff = -1
         elif direction == 'E':
@@ -73,6 +76,7 @@ class grid:
         return row in self.grid.index and col in self.grid.columns
 
     def move_ships(self, direction):
+        self.shipinfo_redo.append(self.shipinfo)
         self.clear_grid()
         if direction == 'r':
             self.redo_move()
@@ -84,6 +88,7 @@ class grid:
             for coord in ship_coords:
                 row = str(int(coord[0]) + rd)
                 col = chr(ord(coord[1]) + cd)
+                print(row, col)
                 # check that new coords are on board and unoccupied
                 if not self.on_grid(row, col) or not self.getGridSpace(row, col)=='-':
                     new_coords = ship_coords
