@@ -8,7 +8,7 @@ def main():
     '''Runs main game loop'''
     # curr_game = game()
     # curr_game.SetUpBoard()
-    ships = [Minesweeper(), Destroyer(), Battleship(), Submarine()]
+    ships = [minesweeper(), destroyer(), battleship(), submarine()]
     g = Game(ships)
     g.play_game()
 

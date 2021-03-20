@@ -12,8 +12,8 @@ class grid:
         names list, empty ship info dictionary, sonar status and sonar
         remaining uses left.
         '''
+
         self.grid = self.create_grid()
-        self.underwater = self.create_grid()
         self.display = self.create_grid()
         self.shipinfo = {}
         self.shipinfo_history = []
@@ -23,22 +23,29 @@ class grid:
         return pd.DataFrame('-', index=[str(i) for i in range(1, 11)],
                              columns=[chr(i) for i in range(ord('A'), ord('J') + 1)])
 
-    def redo_grid(self):
+    def activate_subs(self):
+        shipinfo_local = self.shipinfo.copy()
+        for key in shipinfo_local.keys():
+            if key.islower():
+                coords = self.shipinfo.pop(key)
+                self.shipinfo[key.upper()] = coords
+
+    def redo_move(self):
         try:
             self.shipinfo = self.shipinfo_redo.pop()
             self.clear_grid()
             for shipname, ship_coords in self.shipinfo.items():
-                placeOnBoard(ship_coords, shipname, False)
+                self.placeOnBoard(ship_coords, shipname)
         except:
             print('cannot redo board')
 
-    def undo_grid(self):
+    def undo_move(self):
         self.shipinfo_redo.append(self.shipinfo)
         try:
             self.shipinfo = self.shipinfo_history.pop()
             self.clear_grid()
             for shipname, ship_coords in self.shipinfo.items():
-                placeOnBoard(ship_coords, shipname, False)
+                self.placeOnBoard(ship_coords, shipname)
         except:
             self.shipinfo_redo.pop()
             print('cannot undo board: board is already at oldest known configuration')
@@ -67,6 +74,10 @@ class grid:
 
     def move_ships(self, direction):
         self.clear_grid()
+        if direction == 'r':
+            self.redo_move()
+        if direction == 'u':
+            self.undo_move()
         rd, cd = self.get_rc_for_move(direction)
         for shipname, ship_coords in self.shipinfo_history[-1].items():
             new_coords = []
@@ -78,7 +89,8 @@ class grid:
                     new_coords = ship_coords
                     break
                 new_coords.append((row, col))
-            placeOnBoard(ship_coords, shipname, False)
+                print(new_coords)
+            self.placeOnBoard(new_coords, shipname)
 
     def checkCoord(self, input_coord):
         '''Verifies coordinates are inside the game board.
@@ -136,7 +148,7 @@ class grid:
             self.setDisplay(row, col, val)
 
     def setDisplay(self, row, col, val):
-        self.display[col][row] = val
+        self.display[col][row] = val[0]
 
     def getGridSpace(self, row, col):
         '''Get grid space value.
@@ -151,7 +163,7 @@ class grid:
         '''Places ship on board given ship coordinates.
         Args:
             ship_coords: list of ship coordinates
-            ship_name: ship name for game board
+            shipname: ship name for game board
             print_board: False by default
             submerged: if ship is submerged
         Returns:
@@ -159,41 +171,45 @@ class grid:
             False: if ship wasn't successfully placed on board
                    due to space already being occupied
         '''
-        if shipname == 'SubmarineU':
-            board = [self.underwater]
-            set
-        else:
-            board = [self.grid]
+        print(ship_coords)
+        print(shipname)
         for coord in ship_coords:
             row = coord[0]
             col = coord[1]
-            if board[col][row] == '-':
+            if self.grid[col][row] == '-':
                 self.setGridSpace(row, col, shipname, False)
             else:
                 return False
 
         self.shipinfo[shipname] = ship_coords
+
         if print_board:
             self.printBoard()
         return True
 
-    def result_of_hit(self, ship_name):
+    def CQ_sink(self, shipname):
+        coords = self.shipinfo.pop(shipname)
+        for coord in coords:
+            if isinstance(coord, tuple):
+                self.setGridSpace(coord[0], coord[1], 'X')
+
+    def result_of_hit(self, shipname):
         '''Finds result of hit.
         Board is all zeros
         This only works if there is only one of each ship
         It checks if there are any other grid spaces with that ship name
         Args:
-            ship_name: ship name
+            shipname: ship name
         Returns:
             outcome: string detailing results of hit
             outcome_p2: string detailing results of hit from player2 attack
         '''
         # search the board for other instances of the ship
         print('this should be true if there are any instances of the ship left: ')
-        print(ship_name in self.shipinfo.keys())
-        if ship_name in self.shipinfo.keys():
+        print(shipname in self.shipinfo.keys())
+        if shipname in self.shipinfo.keys():
             outcome = 'You have hit one of your opponents ships!'
-            outcome_p2 = 'Your opponent has hit your {}'.format(ship_name)
+            outcome_p2 = 'Your opponent has hit your {}'.format(shipname)
         else:
             print('this should be 1 if there are no more ships on the board')
             print(max(np.vectorize(len)(self.grid.values.astype(str)).max(axis=0)))
@@ -204,19 +220,13 @@ class grid:
                 outcome = 'You have sunk your opponents last ship, YOU WIN!'
                 outcome_p2 = 'Your opponent has sunk your last ship, YOU LOSE'
             else:
-                outcome = 'You have sunk your opponents {}'.format(ship_name)
-                outcome_p2 = 'Your opponent has sunk your {}'.format(ship_name)
+                outcome = 'You have sunk your opponents {}'.format(shipname)
+                outcome_p2 = 'Your opponent has sunk your {}'.format(shipname)
         return outcome, outcome_p2
 
-    def replace_val(self, row, col, val):
-        if val == '-':
-            self.setGridSpace(row, col, '#')
-            print('empty grid space', self.getGridSpace(row, col))
-        elif len(val) > 1:
-            self.setGridSpace(row, col, '?' + val)
-            print('occupied grid space', self.getGridSpace(row, col))
-
-    def coordinate_attack(attack_coord, p2_attack=False):
+    def coordinate_attack(self, attack_coord, p2_attack=False):
+        # index of ship coordinate that was hit
+        hit = None
         if len(attack_coord) == 2:
             print('attack coord', attack_coord)
             row = attack_coord[0]
@@ -224,23 +234,35 @@ class grid:
             val = self.grid[col][row]
             if '?' in val:
                 val = val.split('?')[1]
-            if val == '-' or val == '#':
+            if val == '-' or val == '#' or val.islower():
                 outcome = 'YOU MISSED'
                 outcome_p2 = 'YOUR OPPONENT MISSED'
                 self.setGridSpace(row, col, 'O')
             else:
                 for key, value in self.shipinfo.items():
-                    if (row, col) in value:
-                        self.shipinfo[key].remove((row,col))
-                        break
+                    print('in hit')
+                    print(key)
+                    print(value)
+                    if (row, col) in value and key.isupper():
+                        idx = value.index((row,col))
+                        self.shipinfo[key][idx] = '-'
+                        hit = [key.lower(), idx+1]
                 self.setGridSpace(row, col, 'X')
                 outcome, outcome_p2 = self.result_of_hit(val)
             if p2_attack:
-                return outcome_p2
+                return [outcome_p2, hit]
             else:
-                return outcome
+                return [outcome, hit]
 
-    def sonar_attack(attack_coord):
+    def replace_val_sonar(self, row, col, val):
+        if val == '-':
+            self.setGridSpace(row, col, '#')
+            print('empty grid space', self.getGridSpace(row, col))
+        elif isinstance(val, list):
+            self.setGridSpace(row, col, '?' + val)
+            print('occupied grid space', self.getGridSpace(row, col))
+
+    def sonar_attack(self, attack_coord):
         row = attack_coord[0]
         col = attack_coord[1]
 
@@ -248,17 +270,17 @@ class grid:
             new_col = chr(ord(col) + r)
             print('new col', new_col)
             if new_col in self.grid:
-                self.replace_val(row, new_col, self.grid[new_col][row])
+                self.replace_val_sonar(row, new_col, self.grid[new_col][row])
 
         for c in range(-2, 3):
             new_row = str(int(row) + c)
             if new_row in self.grid[col]:
-                self.replace_val(new_row, col, self.grid[col][new_row])
+                self.replace_val_sonar(new_row, col, self.grid[col][new_row])
 
         for i in [-1, 1]:
             new_col = chr(ord(col) + i)
             for j in [-1, 1]:
                 new_row = str(int(row) + j)
                 if new_col in self.grid and new_row in self.grid[new_col]:
-                    self.replace_val(new_row, new_col, self.grid[new_col][new_row])
+                    self.replace_val_sonar(new_row, new_col, self.grid[new_col][new_row])
 

@@ -10,7 +10,7 @@ class player:
         self.ships = self.addShips(ships)
         self.board = grid()
         self.sonarRemaining = 2
-        self.validAttack = {'c': 'coordinate attack'}
+        self.validAttack = {'c': 'coordinate attack', 'm': 'move fleet'}
 
     @staticmethod
     def addShips(ships):
@@ -19,22 +19,47 @@ class player:
             fleet.append(s)
         return fleet
 
+    # observer pattern
+    def signalFirstHit(self):
+        self.validAttack.pop('c')
+        self.validAttack.update({'s': 'sonar attack'})
+        self.validAttack.update({'l': 'laser attack'})
+        print('you have activated your space laser! This will replace your bomb attacks and allow you to reach submerged submarines')
+        self.board.activate_subs()
+
     def processResult(self, result):
         print(result)
         if 'sunk' in result and 'c' in self.validAttack:
-            self.validAttack.pop('c')
-            self.validAttack.update({'s': 'sonar attack'})
-            self.validAttack.update({'l': 'laser attack'})
-            print('you have activated your space laser! This will replace your bomb attacks and allow you to reach submerged submarines')
+            self.signalFirstHit()
         if 'last' in result:
             print('GAME OVER: you won!')
             exit()
 
-    def setUpBoard(self):
+    def setUpBoard_orig(self):
         for s in self.ships:
             self.setUpShip(s)
 
-    def setUpShip(self, ship_obj):
+    def setUpBoard(self):
+        for idx, s in enumerate(self.ships):
+            self.setUpShip_auto(s, coords[idx])
+
+    def setUpShip(self, ship_obj, idx):
+        coords = [[('1', 'A'), ('2', 'A')],
+                  [('1', 'B'), ('2', 'B'), ('3', 'B')],
+                  [('1', 'C'), ('2', 'C'), ('3', 'C'), ('4', 'C')],
+                  [('1', 'D'), ('2', 'D'), ('3', 'D'), ('4', 'D')]]
+        '''Sets up ships for player1.
+        Takes in player1 input for where should be placed
+        Args:
+            ship_obj: used to place ship on player1's game board
+        '''
+        ship_coords = coords[idx]
+        print('Ship coords: ', ship_coords)
+        if not self.board.placeOnBoard(ship_coords, ship_obj.getName(), True):
+            print('\nthe space you chose to put your {} is already occupied, '
+                  'choose another'.format(ship_obj.getName()))
+
+    def setUpShip_orig(self, ship_obj):
         '''Sets up ships for player1.
         Takes in player1 input for where should be placed
         Args:
@@ -64,42 +89,54 @@ class player:
             ship_coords = ship_obj.checkDir(trans_coord, direction)
             if len(ship_coords) > 0:  # check length of ship coordinates
                 return ship_coords
-        else:
-            return self.getUserShipInput(ship_obj)
+        return self.getUserShipInput(ship_obj)
 
     def getAttackCoordinate(self, attack_type):
-        input_coord = input('Provide the coordinate for your {} attack: '.format(attack_type))
+        input_coord = input('Provide the coordinate for your {}: '.format(attack_type))
         coord = self.board.checkCoord(input_coord)
         if len(coord) == 2:
-            a = attack()
-            at = a.createAttack(attack_type[0], coord)
-            return at
+            return coord
         else:
             print('\nTry again with valid attack coordinates')
             return self.getAttackCoordinate(attack_type)
 
-    def getAttack(self):
+    def getAttackType(self):
         '''Get attack coordinates from user'''
-        if len(self.validAttack) > 1:
-            print('Attack Options:')
-            for key, value in self.validAttack.items():
-                print('enter', key, 'for ', value)
-            attack_type = input('\nProvide which type of attack you''d like to use: ').lower()
-            if attack_type not in self.validAttack:
-                print('Invalid input, try again')
-                self.getAttack()
-            attack= self.getAttackCoordinate(self.validAttack[attack_type])
+        print('Attack Options:')
+        for key, value in self.validAttack.items():
+            print('enter', key, 'for ', value)
 
-            if attack_type == 's':
-                if self.sonarRemaining > 1:
-                    self.sonarRemaining -= 1
-                else:
-                    self.validAttack.pop(attack_type)
+        attack_type = input('\nProvide which type of attack you''d like to use: ').lower()
+
+        if attack_type == 's':
+            if self.sonarRemaining > 1:
+                self.sonarRemaining -= 1
+            else:
+                self.validAttack.pop(attack_type)
+
+        if attack_type not in self.validAttack:
+            print('Invalid input, try again')
+            return self.getAttackType()
+        return attack_type
+
+    def moveFleet(self):
+        valid_dirs = ['N', 'S', 'W', 'E', 'u', 'r']
+        direction = input('Please choose between N, S, W or E movement and u/r for undo/redo: ')
+        if direction not in valid_dirs:
+            return self.moveFleet()
         else:
-            attack_type = str(next(iter(self.validAttack)))
-            attack = self.getAttackCoordinate(self.validAttack[attack_type])
+            return direction
 
-        return attack
+
+    def getAttack(self):
+        attack_type = self.getAttackType()
+        if attack_type == 'm':
+            coord = self.moveFleet()
+        else:
+            coord = self.getAttackCoordinate(self.validAttack[attack_type])
+        a = attack()
+        at = a.createAttack(attack_type[0], coord)
+        return at
 
 class notAIBot(player):
     def __init__(self, ships):
