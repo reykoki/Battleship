@@ -1,6 +1,6 @@
 import sys
 sys.path.append('../battleship')
-from Ship import *
+from ship import *
 import unittest
 from unittest import TestCase
 
@@ -11,28 +11,27 @@ class TestInput(TestCase):
     def test_Minesweeper(self):
         '''Test to ensure Battleship class returns correct information
         for Minesweeper type.'''
-        ms = Minesweeper()
-        self.assertEqual(ms.getName(), 'Minesweeper')
+        ms = minesweeper()
+        self.assertEqual(ms.getName(), 'MINESWEEPER')
         self.assertEqual(ms.getLength(), 2)
 
     def test_Destroyer(self):
         '''Test to ensure Battleship class returns correct information
         for Destroyer type.'''
-        ds = Destroyer()
-        self.assertEqual(ds.getName(), 'Destroyer')
+        ds = destroyer()
+        self.assertEqual(ds.getName(), 'DESTROYER')
         self.assertEqual(ds.getLength(), 3)
 
     def test_Battleship(self):
         '''Test to ensure Battleship class returns correct information
         for Battleship type.'''
-        bs = Battleship()
-        self.assertEqual(bs.getName(), 'Battleship')
+        bs = battleship()
+        self.assertEqual(bs.getName(), 'BATTLESHIP')
         self.assertEqual(bs.getLength(), 4)
 
     def test_Submarine(self):
         '''Test to ensure Submarine class returns correct information
         for Submarine type.'''
-        sm = Submarine()
-        self.assertEqual(sm.getName(), 'Submarine')
+        sm = submarine()
+        self.assertEqual(sm.getName(), 'submarine')
         self.assertEqual(sm.getLength(), 4)
-        # self.assertEqual(sm.isSubmerged(), False)

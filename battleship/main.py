@@ -5,12 +5,11 @@ from battleshipGame import Game
 
 
 def main():
-    '''Runs main game loop'''
-    # curr_game = game()
-    # curr_game.SetUpBoard()
+    '''Initializes list of ships for game and calls game loop.'''
     ships = [minesweeper(), destroyer(), battleship(), submarine()]
     g = Game(ships)
     g.play_game()
+
 
 if __name__ == "__main__":
     main()

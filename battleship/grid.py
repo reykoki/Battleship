@@ -4,15 +4,17 @@ import pandas as pd
 class grid:
     '''Grid object. Used to manipulate grid and game board.
     Attributes:
-
+        grid: game grid for ship placement and attack handling
+        display: grid to display
+        shipinfo: dictionary to store ship coordinates
+        shipinfo_history: list to store previous ship configurations
+        shipinfo_redo: list to store ship configurations
     '''
-
     def __init__(self):
-        '''Initializes battlefield object. Creates grid, initializes empty ship
+        '''Initializes grid object. Creates grid, initializes empty ship
         names list, empty ship info dictionary, sonar status and sonar
         remaining uses left.
         '''
-
         self.grid = self.create_grid()
         self.display = self.create_grid()
         self.shipinfo = {}
@@ -20,10 +22,12 @@ class grid:
         self.shipinfo_redo = []
 
     def create_grid(self):
+        '''Create grid for ship placement, attack handling and display.'''
         return pd.DataFrame('-', index=[str(i) for i in range(1, 11)],
                              columns=[chr(i) for i in range(ord('A'), ord('J') + 1)])
 
     def activate_subs(self):
+        '''Activate subscribers.'''
         shipinfo_local = self.shipinfo.copy()
         for key in shipinfo_local.keys():
             if key.islower():
@@ -31,6 +35,7 @@ class grid:
                 self.shipinfo[key.upper()] = coords
 
     def redo_move(self):
+        '''Redo move. Gets latest move from redo move list.'''
         try:
             self.shipinfo = self.shipinfo_redo.pop()
             self.grid = self.create_grid()
@@ -38,6 +43,7 @@ class grid:
             print('cannot redo board')
 
     def undo_move(self):
+        '''Undo move. Gets latest move from history list.'''
         try:
             self.shipinfo_redo.append(self.shipinfo)
             self.shipinfo = self.shipinfo_history.pop()
@@ -47,6 +53,13 @@ class grid:
             print('cannot undo board: board is already at oldest known configuration')
 
     def get_rc_for_move(self, direction):
+        '''Get row and column differences for each direction that ship can be moved.
+        Args:
+            direction: direction to move fleet
+        Returns:
+            row_diff: units to be added to row coordinate
+            col_diff: units to be added to column coordinate
+        '''
         row_diff = 0
         col_diff = 0
         if direction == 'N':
@@ -64,7 +77,12 @@ class grid:
         return row_diff, col_diff
 
     # coord format ('1', 'A')
-    def onBoard(self, coord, print_error = False):
+    def onBoard(self, coord, print_error=False):
+        '''Check if coordinate is on grid.
+        Args:
+            coord: coordinate to be verified
+            print_error: option to print error message (False by default).
+        '''
         if coord[0] in self.grid.index and coord[1] in self.grid.columns:
             return True
         elif print_error:
@@ -72,6 +90,10 @@ class grid:
         return False
 
     def move_ships(self, direction):
+        '''Move fleet one unit in direction specified by player.
+        Args:
+            direction: N, S, E, W direction input by user
+        '''
         rd, cd = self.get_rc_for_move(direction)
         shipinfo_local = self.shipinfo.copy()
         if rd != 0 or cd != 0:
@@ -85,19 +107,20 @@ class grid:
                     row = str(int(coord[0]) + rd)
                     col = chr(ord(coord[1]) + cd)
                     # check that new coords are on board and unoccupied
-                    if not self.onBoard((row, col)) or not self.getGridSpace(row, col)=='-':
+                    if not self.onBoard((row, col)) \
+                            or not self.getGridSpace(row, col) == '-':
                         new_coords = ship_coords
                         break
                     new_coords.append((row, col))
             if len(new_coords) > 0:
                 self.placeOnBoard(new_coords, shipname)
 
-
     def checkCoord(self, input_coord):
         '''Verifies coordinates are inside the game board.
         Converts input coordinates from game board coordinates to grid
         coordinates
-
+        Args:
+            input_coord: coordinate to be verified
         Returns:
             trans_coord: transformed coordinates if valid coordinate
             False: if invalid coordinate
@@ -141,18 +164,20 @@ class grid:
             board = board.replace(shipname, '-')
         print(board, '\n')
 
-    def setGridSpace(self, row, col, val, update_display = True):
+    def setGridSpace(self, row, col, val, update_display=True):
         '''Set grid space value.
         Args:
             row: row value
             col: column value
             val: value for (row,col) coordinate
+            update_display: if true, update display
         '''
         self.grid[col][row] = val
         if update_display:
             self.setDisplay(row, col, val)
 
     def setDisplay(self, row, col, val):
+        '''Set val to be displayed on grid.'''
         self.display[col][row] = val[0]
 
     def getGridSpace(self, row, col):
@@ -160,17 +185,25 @@ class grid:
         Args:
             row: row value
             col: column value
+        Return:
+            value at grid coordinate
         '''
         return self.grid[col][row]
 
     def notOccupied(self, coord, print_error=False):
+        '''Verify coordinate on grid isn't occupied.
+        Args:
+            coord: coord to be verified
+            print_error: option to print grid value (False by default.)
+        '''
         row = coord[0]
         col = coord[1]
         if self.grid[col][row] == '-':
             return True
         else:
             if print_error:
-                print('The coordinates given overlap with your {}'.format(self.grid[col][row]))
+                print('The coordinates given overlap with your {}'
+                      .format(self.grid[col][row]))
             return False
 
     def placeOnBoard(self, ship_coords, shipname, print_board=False):
@@ -179,13 +212,11 @@ class grid:
             ship_coords: list of ship coordinates
             shipname: ship name for game board
             print_board: False by default
-            submerged: if ship is submerged
         Returns:
             True: if the shp was successfully placed on the board
             False: if ship wasn't successfully placed on board
                    due to space already being occupied
         '''
-
         for coord in ship_coords:
             row = coord[0]
             col = coord[1]
@@ -201,6 +232,10 @@ class grid:
         return True
 
     def CQ_sink(self, shipname):
+        '''Set grid space to be marked as hit if ship's CQ were hit.
+        Args:
+            shipname: name of ship hit
+        '''
         coords = self.shipinfo.pop(shipname)
         for coord in coords:
             if isinstance(coord, tuple):
@@ -238,6 +273,15 @@ class grid:
         return outcome, outcome_p2
 
     def coordinate_attack(self, attack_coord, p2_attack=False):
+        '''Coordinate attack handler.
+        Args:
+            attack_coord: coordinate of attack
+            p2_attack: bool to specify bot attack
+        Returns:
+            outcome: outcome of coordinate attack
+            hit: captain's quarters index
+            outcome_p2: outcome of coordinate attack on p2
+        '''
         # index of ship coordinate that was hit
         hit = None
         if len(attack_coord) == 2:
@@ -264,6 +308,12 @@ class grid:
                 return [outcome, hit]
 
     def replace_val_sonar(self, row, col, val):
+        '''Replace grid space value when sonar is used.
+        Args:
+            row: row coordinate
+            col: column coordinate
+            val: value to replace grid space with
+        '''
         if val == '-':
             self.setGridSpace(row, col, '#')
             print('empty grid space', self.getGridSpace(row, col))
@@ -272,6 +322,10 @@ class grid:
             print('occupied grid space', self.getGridSpace(row, col))
 
     def sonar_attack(self, attack_coord):
+        '''Sonar attack handler. Changes grid values when sonar attack used.
+        Args:
+            attack_coord: attack coordinate
+        '''
         row = attack_coord[0]
         col = attack_coord[1]
 
@@ -291,4 +345,3 @@ class grid:
                 new_row = str(int(row) + j)
                 if new_col in self.grid and new_row in self.grid[new_col]:
                     self.replace_val_sonar(new_row, new_col, self.grid[new_col][new_row])
-

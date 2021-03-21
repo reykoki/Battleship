@@ -4,11 +4,11 @@ from unittest import mock
 from unittest import TestCase
 sys.path.append('../battleship')
 from player import *
-from Ship import *
+from ship import *
+
 
 class TestInput(TestCase):
-    '''Test functionality of player and notAIBot classes'''
-
+    '''Test functionality of player and notAIBot classes.'''
     def setUp(self):
         self.ships = [minesweeper(), destroyer(), battleship(), submarine()]
         self.p = player(self.ships)

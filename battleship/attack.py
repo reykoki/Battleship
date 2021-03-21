@@ -1,5 +1,7 @@
 class attack:
+    '''Defines attack type class.'''
     def createAttack(self, name, coords):
+        '''Return attack object depending on user input.'''
         if name == 'c':
             cA = coordAttack(name, coords)
             return cA
@@ -14,6 +16,11 @@ class attack:
             return mF
 
 class coordAttack(attack):
+    '''Define coordinate attack type.
+    Attributes:
+        name: attack name
+        coords: attack coords
+    '''
     def __init__(self, name, coords):
         self.name = name
         self.coords = coords
@@ -26,17 +33,22 @@ class coordAttack(attack):
 
 
 class sonarAttack(attack):
+    '''Define sonar attack type.
+    Attributes:
+        name: attack name
+        coords: attack coords
+    '''
     def __init__(self, name, coords):
         self.name = name
-        self.coords = self.createCoords(coords)
+        self.coords = coords
 
-    def createCoords(self, coords):
-        '''Creates list of coordinates in sonar attack'''
-        sonarCoords = []
-        row = str(int(coords[0]))
-        col = chr(ord(coords[1]))
-        sonarCoords.append(coords)
-        return coords
+    # def createCoords(self, coords):
+    #     '''Creates list of coordinates in sonar attack'''
+    #     sonarCoords = []
+    #     row = str(int(coords[0]))
+    #     col = chr(ord(coords[1]))
+    #     sonarCoords.append(coords)
+    #     return coords
 
     def getName(self):
         return self.name
@@ -45,6 +57,11 @@ class sonarAttack(attack):
         return self.coords
 
 class spaceLaserAttack(attack):
+    '''Define space laser attack type.
+    Attributes:
+        name: attack name
+        coords: attack coords
+    '''
     def __init__(self, name, coords):
         self.name = name
         self.coords = coords
@@ -55,7 +72,13 @@ class spaceLaserAttack(attack):
     def getCoords(self):
         return self.coords
 
+
 class moveFleet(attack):
+    '''Define move fleet command.
+    Attributes:
+        name: moveFleet name
+        direction: direction of fleet movement
+    '''
     def __init__(self, name, direction):
         self.name = name
         self.direction = direction

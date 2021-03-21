@@ -5,7 +5,7 @@ from unittest import mock
 from unittest import TestCase
 import pandas as pd
 
-from Ship import *
+from ship import *
 from grid import *
 
 class TestInput(TestCase):
