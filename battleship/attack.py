@@ -1,8 +1,3 @@
-'''
-https://stackabuse.com/the-factory-method-design-pattern-in-python/
-'''
-
-
 class attack:
     def createAttack(self, name, coords):
         if name == 'c':
@@ -17,7 +12,6 @@ class attack:
         elif name == 'm':
             mF = moveFleet(name, coords)
             return mF
-
 
 class coordAttack(attack):
     def __init__(self, name, coords):

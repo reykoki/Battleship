@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from Ship import *
+from ship import *
 from battleshipGame import Game
 
 

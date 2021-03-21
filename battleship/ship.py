@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-class Ship:
+class ship:
     '''Battleship class used to store ship type, length,
     coordinates and look up tables.
     Attributes:
@@ -82,28 +82,28 @@ class Ship:
             ship_coords.append(next_coord)
         return ship_coords
 
-class minesweeper(Ship):
+class minesweeper(ship):
     '''Creates Minesweeper class.
     Default length = 2.
     '''
     def __init__(self):
         super().__init__(name='MINESWEEPER', length=2, CQ_idx=1)
 
-class destroyer(Ship):
+class destroyer(ship):
     '''Creates Destroyer class.
     Default length = 3.
     '''
     def __init__(self):
         super().__init__(name='DESTROYER', length=3, CQ_idx=2)
 
-class battleship(Ship):
+class battleship(ship):
     '''Creates Battleship class.
     Default length = 4.
     '''
     def __init__(self):
         super().__init__(name='BATTLESHIP', length=4, CQ_idx=3)
 
-class submarine(Ship):
+class submarine(ship):
     '''Creates Submarine class.
     '''
     def __init__(self):
