@@ -1,5 +1,5 @@
+import itertools
 import random
-from LUT import LUT
 from grid import grid
 from attack import *
 from userInput import *
@@ -17,7 +17,6 @@ class player:
         fleet = []
         for s in ships:
             fleet.append(s)
-        print(s)
         return fleet
 
     # observer pattern
@@ -146,7 +145,15 @@ class notAIBot(player):
         Creates attack LUT for bot
         '''
         super().__init__(ships)
-        self.attack_LUT = LUT.get_Attack_LUT()
+        self.attack_LUT = self.create_attack_LUT()
+
+    def create_attack_LUT(self):
+        num_rows = self.board.grid.shape[0]
+        num_cols = self.board.grid.shape[1]
+        possible_rows = [str(i) for i in range(1, num_rows+1)]
+        possible_cols = [chr(i) for i in range(ord('A'), ord('Z')+1)][:num_cols]
+        LUT = list(itertools.product(possible_rows, possible_cols))
+        return LUT
 
     def remove_attack_coord(self, attack):
         '''Ensures bot doesn't attack same place twice.
@@ -171,8 +178,6 @@ class notAIBot(player):
     def setUpShip(self, ship_obj):
         coords = self.place_ship(ship_obj)
         if not self.board.placeOnBoard(coords, ship_obj.getName(), True):
-            print('\nthe space you chose to put your {} is already occupied, '
-                  'choose another'.format(ship_obj.getName()))
             self.setUpShip(ship_obj)
 
     def place_ship(self, ship_obj):
@@ -183,17 +188,21 @@ class notAIBot(player):
             coords: ship coordinates
             ship_obj.getName(): ship type
         '''
+        print('hhhhhhhhhhh')
         direction = random.choice(['v', 'h'])
         if direction == 'h':
-            init_coord = random.choice(ship_obj.getHorizontalLUT())
+            init_coord = random.choice(self.attack_LUT)
             coords = []
             for idx in range(ship_obj.getLength()):
                 next_coord = (init_coord[0], chr(ord(init_coord[1]) + idx))
                 coords.append(next_coord)
         else:
-            init_coord = random.choice(ship_obj.getVerticalLUT())
+            init_coord = random.choice(self.attack_LUT)
             coords = []
             for idx in range(ship_obj.getLength()):
                 next_coord = (str(int(init_coord[0]) + idx), init_coord[1])
                 coords.append(next_coord)
+        for coord in coords:
+            if not self.board.onBoard(coord) or not self.board.notOccupied(coord):
+                return self.place_ship(ship_obj)
         return coords

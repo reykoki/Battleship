@@ -163,6 +163,15 @@ class grid:
         '''
         return self.grid[col][row]
 
+    def notOccupied(self, coord, print_error=False):
+        row = coord[0]
+        col = coord[1]
+        if self.grid[col][row] == '-':
+            return True
+        else:
+            if print_error:
+                print('The coordinates given overlap with your {}'.format(self.grid[col][row]))
+            return False
 
     def placeOnBoard(self, ship_coords, shipname, print_board=False):
         '''Places ship on board given ship coordinates.
@@ -180,7 +189,7 @@ class grid:
         for coord in ship_coords:
             row = coord[0]
             col = coord[1]
-            if self.grid[col][row] == '-':
+            if self.notOccupied(coord):
                 self.setGridSpace(row, col, shipname, False)
             else:
                 return False
