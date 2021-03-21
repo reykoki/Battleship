@@ -1,6 +1,3 @@
-from Ship import *
-from grid import grid
-from userInput import *
 from player import *
 
 class Game:

@@ -1,9 +1,9 @@
 import itertools
 import random
+
 from grid import grid
 from attack import *
-from userInput import *
-from Ship import *
+from ship import *
 
 class player:
     def __init__(self, ships):
@@ -34,22 +34,6 @@ class player:
         if 'last' in result:
             print('GAME OVER: you won!')
             exit()
-
-    def setUpShip2(self, ship_obj, idx):
-        coords = [[('1', 'A'), ('2', 'A')],
-                  [('1', 'B'), ('2', 'B'), ('3', 'B')],
-                  [('1', 'C'), ('2', 'C'), ('3', 'C'), ('4', 'C')],
-                  [('1', 'D'), ('2', 'D'), ('3', 'D'), ('4', 'D')]]
-        '''Sets up ships for player1.
-        Takes in player1 input for where should be placed
-        Args:
-            ship_obj: used to place ship on player1's game board
-        '''
-        ship_coords = coords[idx]
-        print('Ship coords: ', ship_coords)
-        if not self.board.placeOnBoard(ship_coords, ship_obj.getName(), True):
-            print('\nthe space you chose to put your {} is already occupied, '
-                  'choose another'.format(ship_obj.getName()))
 
     def setUpShip(self, ship_obj):
         '''Sets up ships for player1.
@@ -188,7 +172,6 @@ class notAIBot(player):
             coords: ship coordinates
             ship_obj.getName(): ship type
         '''
-        print('hhhhhhhhhhh')
         direction = random.choice(['v', 'h'])
         if direction == 'h':
             init_coord = random.choice(self.attack_LUT)
