@@ -61,7 +61,7 @@ class Ship:
             if len(self.CQ) == 1:
                 sink_ship = True
             else:
-                CQ.pop()
+                self.CQ.pop()
         return sink_ship
 
     def checkDir(self, trans_coord, direction):

@@ -120,8 +120,8 @@ class player:
         return attack_type
 
     def moveFleet(self):
-        valid_dirs = ['N', 'S', 'W', 'E', 'u', 'r']
-        direction = input('Please choose between N, S, W or E movement and u/r for undo/redo: ')
+        valid_dirs = ['N', 'S', 'W', 'E', 'U', 'R']
+        direction = input('Please choose between N, S, W or E movement and u/r for undo/redo: ').upper()
         if direction not in valid_dirs:
             return self.moveFleet()
         else:

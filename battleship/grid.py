@@ -33,22 +33,19 @@ class grid:
     def redo_move(self):
         try:
             print("redo ",self.shipinfo_redo)
-            self.shipinfo = self.shipinfo_redo.pop(0)
-            for shipname, ship_coords in self.shipinfo.items():
-                self.placeOnBoard(ship_coords, shipname)
-            self.clear_grid()
+            self.shipinfo = self.shipinfo_redo.pop()
+            self.grid = self.create_grid()
         except:
             print('cannot redo board')
 
     def undo_move(self):
         print('in undo')
         print(self.shipinfo)
+        print(self.shipinfo_history)
         try:
-            self.shipinfo = self.shipinfo_history.pop(0)
-
-            for shipname, ship_coords in self.shipinfo.items():
-                self.placeOnBoard(ship_coords, shipname)
-            self.clear_grid()
+            self.shipinfo_redo.append(self.shipinfo)
+            self.shipinfo = self.shipinfo_history.pop()
+            self.grid = self.create_grid()
         except:
             self.shipinfo_redo.pop()
             print('cannot undo board: board is already at oldest known configuration')
@@ -64,38 +61,39 @@ class grid:
             col_diff = -1
         elif direction == 'E':
             col_diff = 1
+        elif direction == 'R':
+            self.redo_move()
+        elif direction == 'U':
+            self.undo_move()
         return row_diff, col_diff
-
-    def clear_grid(self):
-        self.shipinfo_history.append(self.shipinfo)
-        self.grid = self.create_grid()
-        self.shipinfo = {}
 
     # format ('1', 'A')
     def on_grid(self, row, col):
         return row in self.grid.index and col in self.grid.columns
 
     def move_ships(self, direction):
-        self.shipinfo_redo.append(self.shipinfo)
-        self.clear_grid()
-        if direction == 'r':
-            self.redo_move()
-        if direction == 'u':
-            self.undo_move()
         rd, cd = self.get_rc_for_move(direction)
-        for shipname, ship_coords in self.shipinfo_history[-1].items():
+        shipinfo_local = self.shipinfo.copy()
+        if rd != 0 or cd != 0:
+            self.shipinfo_history.append(self.shipinfo)
+            self.grid = self.create_grid()
+            self.shipinfo = {}
+        for shipname, ship_coords in shipinfo_local.items():
             new_coords = []
             for coord in ship_coords:
-                row = str(int(coord[0]) + rd)
-                col = chr(ord(coord[1]) + cd)
-                print(row, col)
-                # check that new coords are on board and unoccupied
-                if not self.on_grid(row, col) or not self.getGridSpace(row, col)=='-':
-                    new_coords = ship_coords
-                    break
-                new_coords.append((row, col))
-                print(new_coords)
-            self.placeOnBoard(new_coords, shipname)
+                if isinstance(coord, tuple):
+                    row = str(int(coord[0]) + rd)
+                    col = chr(ord(coord[1]) + cd)
+                    print(row, col)
+                    # check that new coords are on board and unoccupied
+                    if not self.on_grid(row, col) or not self.getGridSpace(row, col)=='-':
+                        new_coords = ship_coords
+                        break
+                    new_coords.append((row, col))
+                    print(new_coords)
+            if len(new_coords) > 0:
+                self.placeOnBoard(new_coords, shipname)
+
 
     def checkCoord(self, input_coord):
         '''Verifies coordinates are inside the game board.
@@ -127,8 +125,12 @@ class grid:
 
     def printBoard(self):
         '''Prints game board to the terminal.'''
-        print('\n ========= YOUR BOARD =========\n')
         board = self.grid.apply(lambda x: x.str.slice(0, 1))
+        for idx in board.index:
+            for col in board.columns:
+                if board[col][idx] == '-':
+                    board[col][idx] = self.display[col][idx]
+        print('\n ========= YOUR BOARD =========\n')
         print(board, '\n')
         print(self.shipinfo)
 
