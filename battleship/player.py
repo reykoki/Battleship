@@ -17,6 +17,7 @@ class player:
         fleet = []
         for s in ships:
             fleet.append(s)
+        print(s)
         return fleet
 
     # observer pattern
@@ -35,15 +36,7 @@ class player:
             print('GAME OVER: you won!')
             exit()
 
-    def setUpBoard_orig(self):
-        for s in self.ships:
-            self.setUpShip(s)
-
-    def setUpBoard(self):
-        for idx, s in enumerate(self.ships):
-            self.setUpShip_auto(s, coords[idx])
-
-    def setUpShip(self, ship_obj, idx):
+    def setUpShip2(self, ship_obj, idx):
         coords = [[('1', 'A'), ('2', 'A')],
                   [('1', 'B'), ('2', 'B'), ('3', 'B')],
                   [('1', 'C'), ('2', 'C'), ('3', 'C'), ('4', 'C')],
@@ -59,7 +52,7 @@ class player:
             print('\nthe space you chose to put your {} is already occupied, '
                   'choose another'.format(ship_obj.getName()))
 
-    def setUpShip_orig(self, ship_obj):
+    def setUpShip(self, ship_obj):
         '''Sets up ships for player1.
         Takes in player1 input for where should be placed
         Args:
@@ -72,6 +65,7 @@ class player:
                   'choose another'.format(ship_obj.getName()))
             self.setUpShip(ship_obj)
 
+
     def getUserShipInput(self, ship_obj):
         '''Used to get user input such as starting coordinates and direction of ship.
         Args:
@@ -79,15 +73,23 @@ class player:
         Returns:
             ship_coords: returns ship coordinates if they were input
         '''
+        good_coords = True
         start_coord = input('\nwhich coordinate would you like to place your {} '
                             '(example A1, D5, or J9)? '.format(ship_obj.getName()))
-        direction = input('\nwould you like to place your ship vertically (down)'
-                          ' or horizontally (to the right) of your initial coordinate?'
-                          ' [v/h] ')
-        trans_coord = self.board.checkCoord(start_coord)
-        if len(trans_coord) == 2:
-            ship_coords = ship_obj.checkDir(trans_coord, direction)
-            if len(ship_coords) > 0:  # check length of ship coordinates
+        # turn 'A1' to ('1', 'A') -> (row, col)
+        start_coord = (start_coord[1:], start_coord[0].upper())
+        # if initial coordinate is on board, get direction
+        if self.board.onBoard(start_coord, True):
+            direction = input('\nwould you like to place your ship vertically (down)'
+                              ' or horizontally (to the right) of your initial coordinate?'
+                              ' [v/h] ')
+            ship_coords = ship_obj.checkDir(start_coord, direction)
+            for coord in ship_coords:
+                if not self.board.onBoard(coord):
+                    print('Portion of ship is off the board, choose another starting coordinate')
+                    good_coords = False
+                    break
+            if good_coords and len(ship_coords):
                 return ship_coords
         return self.getUserShipInput(ship_obj)
 

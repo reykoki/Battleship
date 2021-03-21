@@ -21,8 +21,8 @@ class Game:
         self.p2 = notAIBot(ships)
         #for s in ships:
         for idx, s in enumerate(ships):
-            self.p1.setUpShip(s, idx)
-            #self.p1.setUpShip(s)
+            #self.p1.setUpShip(s, idx)
+            self.p1.setUpShip(s)
             self.p2.setUpShip(s)
 
 

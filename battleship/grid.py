@@ -32,16 +32,12 @@ class grid:
 
     def redo_move(self):
         try:
-            print("redo ",self.shipinfo_redo)
             self.shipinfo = self.shipinfo_redo.pop()
             self.grid = self.create_grid()
         except:
             print('cannot redo board')
 
     def undo_move(self):
-        print('in undo')
-        print(self.shipinfo)
-        print(self.shipinfo_history)
         try:
             self.shipinfo_redo.append(self.shipinfo)
             self.shipinfo = self.shipinfo_history.pop()
@@ -67,9 +63,13 @@ class grid:
             self.undo_move()
         return row_diff, col_diff
 
-    # format ('1', 'A')
-    def on_grid(self, row, col):
-        return row in self.grid.index and col in self.grid.columns
+    # coord format ('1', 'A')
+    def onBoard(self, coord, print_error = False):
+        if coord[0] in self.grid.index and coord[1] in self.grid.columns:
+            return True
+        elif print_error:
+            print('Coordinate is not on the board, try again')
+        return False
 
     def move_ships(self, direction):
         rd, cd = self.get_rc_for_move(direction)
@@ -84,13 +84,11 @@ class grid:
                 if isinstance(coord, tuple):
                     row = str(int(coord[0]) + rd)
                     col = chr(ord(coord[1]) + cd)
-                    print(row, col)
                     # check that new coords are on board and unoccupied
-                    if not self.on_grid(row, col) or not self.getGridSpace(row, col)=='-':
+                    if not self.onBoard((row, col)) or not self.getGridSpace(row, col)=='-':
                         new_coords = ship_coords
                         break
                     new_coords.append((row, col))
-                    print(new_coords)
             if len(new_coords) > 0:
                 self.placeOnBoard(new_coords, shipname)
 
@@ -117,7 +115,7 @@ class grid:
         elif row not in self.grid.index:
             print('\nInvalid row choice: choose a number 1-10')
         else:
-            # transformed return with index 0
+            # transformed coord
             trans_coord = (row, col)
             print('trans coord', trans_coord)
             return trans_coord
@@ -178,8 +176,7 @@ class grid:
             False: if ship wasn't successfully placed on board
                    due to space already being occupied
         '''
-        print(ship_coords)
-        print(shipname)
+
         for coord in ship_coords:
             row = coord[0]
             col = coord[1]
@@ -235,7 +232,6 @@ class grid:
         # index of ship coordinate that was hit
         hit = None
         if len(attack_coord) == 2:
-            print('attack coord', attack_coord)
             row = attack_coord[0]
             col = attack_coord[1]
             val = self.grid[col][row]
@@ -247,9 +243,6 @@ class grid:
                 self.setGridSpace(row, col, 'O')
             else:
                 for key, value in self.shipinfo.items():
-                    print('in hit')
-                    print(key)
-                    print(value)
                     if (row, col) in value and key.isupper():
                         idx = value.index((row,col))
                         self.shipinfo[key][idx] = '-'
@@ -275,7 +268,6 @@ class grid:
 
         for r in range(-2, 3):
             new_col = chr(ord(col) + r)
-            print('new col', new_col)
             if new_col in self.grid:
                 self.replace_val_sonar(row, new_col, self.grid[new_col][row])
 
