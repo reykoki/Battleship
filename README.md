@@ -1,8 +1,6 @@
 # Battleship Game
-### CSCI-5448
-#### Track 2
 
-The Quintet: [Devin Burke](https://github.com/mrburke00), [Rey Koki](https://github.com/reykoki) and [Daniel Torres](https://github.com/danieltorres17)
+[Devin Burke](https://github.com/mrburke00), [Rey Koki](https://github.com/reykoki) and [Daniel Torres](https://github.com/danieltorres17)
 
 The agreed upon coding standards are listed in this [style guide](https://google.github.io/styleguide/pyguide.html)
 
